@@ -20,10 +20,11 @@ defmodule InvoixWeb.Router do
     get "/", PageController, :home
   end
 
-  scope "/api", InvoixWeb do 
+  scope "/api", InvoixWeb do
     pipe_through :api
 
     get "/transactions", TransactionController, :transactions
+    get "/invoices", InvoiceController, :getInvoices
   end
 
   # Other scopes may use custom stacks.

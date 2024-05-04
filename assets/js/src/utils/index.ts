@@ -1,5 +1,5 @@
 import dayjs, { Dayjs } from "dayjs";
-import { Transaction, TransactionDTO } from "../types";
+import { Invoice, InvoiceDTO, Transaction, TransactionDTO } from "../types";
 
 export function transactionsBeforeDate(
   transactions: Transaction[],
@@ -20,5 +20,12 @@ export function mapTransactionDTO(
   return transactions.map((tr) => ({
     ...tr,
     date: dayjs(tr.date, "YYYY-MM-DD"),
+  }));
+}
+
+export function mapInvoiceDTO(invoices: InvoiceDTO[]): Invoice[] {
+  return invoices.map((inv) => ({
+    ...inv,
+    date: dayjs(inv.date, "YYYY-MM-DD"),
   }));
 }

@@ -7,9 +7,7 @@ const path = require("path")
 
 module.exports = {
   content: [
-    "./js/**/*.js",
-    "../lib/invoix_web.ex",
-    "../lib/invoix_web/**/*.*ex"
+    "./js/src/**/*.tsx",
   ],
   theme: {
     extend: {

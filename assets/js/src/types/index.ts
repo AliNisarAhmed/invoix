@@ -13,3 +13,22 @@ export type TransactionDTO = {
   date: string;
   amount: string;
 };
+
+export type Invoice = {
+  refNo: string;
+  clientName: string;
+  date: Dayjs;
+  amount: string;
+  status: InvoiceStatus;
+};
+
+export type InvoiceStatus = "PAID" | "NOT_PAID";
+
+export type InvoiceDTO = {
+  refNo: string;
+  clientName: string;
+  date: string;
+  amount: string;
+  status: InvoiceStatus;
+};
+
