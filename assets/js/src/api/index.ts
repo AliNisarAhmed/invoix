@@ -1,4 +1,4 @@
-import { Invoice, Transaction } from "../types";
+import { CurrentUser, Invoice, Transaction } from "../types";
 import { mapInvoiceDTO, mapTransactionDTO } from "../utils";
 
 export async function getTransactions() {
@@ -13,4 +13,11 @@ export async function getInvoices() {
   const data = await resp.json();
 
   return mapInvoiceDTO(data.invoices) as Invoice[];
+}
+
+export async function getCurrentUser() {
+  const resp = await fetch("/auth/users/current-user");
+  const data = await resp.json();
+
+  return data.currentUser as CurrentUser;
 }
