@@ -17,15 +17,10 @@ defmodule InvoixWeb.Router do
     plug :accepts, ["json"]
   end
 
-  pipeline :auth do 
+  pipeline :auth do
     plug :accepts, ["json"]
+    plug :fetch_session
     plug :fetch_current_user
-  end
-
-  scope "/", InvoixWeb do
-    pipe_through :browser
-
-    get "/", PageController, :home
   end
 
   scope "/api", InvoixWeb do
@@ -54,9 +49,12 @@ defmodule InvoixWeb.Router do
 
   ## Authentication routes
 
-  scope "/auth", InvoixWeb do 
+  scope "/auth", InvoixWeb do
+    pipe_through :auth
+
     get "/users/current-user", UserSessionController, :current_user
-    post "/users/register", UserRegistrationController, :create
+    post "/register", UserRegistrationController, :register
+    post "/login", UserSessionController, :login
   end
 
   scope "/", InvoixWeb do
@@ -88,5 +86,11 @@ defmodule InvoixWeb.Router do
     post "/users/confirm", UserConfirmationController, :create
     get "/users/confirm/:token", UserConfirmationController, :edit
     post "/users/confirm/:token", UserConfirmationController, :update
+  end
+
+  scope "/*path", InvoixWeb do
+    pipe_through :browser
+
+    get "/", PageController, :home
   end
 end

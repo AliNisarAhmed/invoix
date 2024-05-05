@@ -37,3 +37,8 @@ export type CurrentUser = {
   email: string;
   username: string;
 };
+
+export type UserSessionRequest = {
+  email: string;
+  password: string;
+}

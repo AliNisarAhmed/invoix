@@ -1,4 +1,9 @@
-import { CurrentUser, Invoice, Transaction } from "../types";
+import {
+  CurrentUser,
+  Invoice,
+  Transaction,
+  UserSessionRequest,
+} from "../types";
 import { mapInvoiceDTO, mapTransactionDTO } from "../utils";
 
 export async function getTransactions() {
@@ -20,4 +25,31 @@ export async function getCurrentUser() {
   const data = await resp.json();
 
   return data.currentUser as CurrentUser;
+}
+
+export async function loginUser({ email, password }: UserSessionRequest) {
+  const resp = await fetch("/auth/login", {
+    method: "POST",
+    credentials: "same-origin",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    referrerPolicy: "no-referrer",
+    body: JSON.stringify({ user: { email, password } }),
+  });
+  return (await resp.json()) as CurrentUser;
+}
+
+export async function registerUser({ email, password }: UserSessionRequest) {
+  const resp = await fetch("/auth/register", {
+    method: "POST",
+    mode: "same-origin",
+    credentials: "same-origin",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    referrerPolicy: "no-referrer",
+    body: JSON.stringify({ user: { email, password } }),
+  });
+  return (await resp.json()) as CurrentUser;
 }

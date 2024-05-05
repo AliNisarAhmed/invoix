@@ -27,4 +27,17 @@ defmodule InvoixWeb.UserRegistrationController do
         render(conn, :new, changeset: changeset)
     end
   end
+
+  def register(conn, %{"user" => user_params}) do
+    case Accounts.register_user(user_params) do
+      {:ok, user} ->
+        conn
+        # |> fetch_session([])
+        # |> UserAuth.fetch_current_user([])
+        |> UserAuth.log_in_user(user)
+
+      {:error, _changeset} ->
+        json(conn, %{"error" => "Unable to register"})
+    end
+  end
 end

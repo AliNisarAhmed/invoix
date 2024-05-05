@@ -21,6 +21,15 @@ defmodule InvoixWeb.UserSessionController do
     end
   end
 
+  def login(conn, %{"user" => user_params}) do
+    %{"email" => email, "password" => password} = user_params
+
+    if user = Accounts.get_user_by_email_and_password(email, password) do
+      conn
+      |> UserAuth.log_in_user(user, user_params)
+    end
+  end
+
   def delete(conn, _params) do
     conn
     |> put_flash(:info, "Logged out successfully.")
@@ -28,6 +37,10 @@ defmodule InvoixWeb.UserSessionController do
   end
 
   def current_user(conn, _params) do
-    json(conn, %{currentUser: Map.get(conn.assigns, :current_user)})
+    with %{} = current_user <- Map.get(conn.assigns, :current_user) do 
+      json(conn, %{currentUser: %{email: current_user.email}})
+    else 
+      _ -> json(conn, %{currentUser: nil})
+    end
   end
 end
