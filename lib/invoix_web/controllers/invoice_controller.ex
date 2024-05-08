@@ -4,7 +4,6 @@ defmodule InvoixWeb.InvoiceController do
 
   def getInvoices(conn, _) do
     invoices = Financials.get_invoices()
-    dbg(invoices)
     render(conn, :getInvoices, invoices: invoices)
   end
 end

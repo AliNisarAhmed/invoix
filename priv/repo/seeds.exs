@@ -25,3 +25,25 @@ Invoix.Repo.insert!(%Invoix.Financials.Invoice{
   amount: Decimal.new(1, 4200, 2),
   client_name: "Ali Ahmed"
 })
+
+Invoix.Repo.insert!(%Invoix.Financials.Invoice{
+  status: "paid",
+  date: DateTime.utc_now() |> DateTime.add(-86400 * 3, :second) |> DateTime.truncate(:second),
+  ref_no: "abc125",
+  amount: Decimal.new(1, 2400, 2),
+  client_name: "Ali Ahmed"
+})
+
+Invoix.Repo.insert!(%Invoix.Financials.Transcation{
+  date: DateTime.utc_now() |> DateTime.add(86400 * 4, :second) |> DateTime.truncate(:second),
+  description: "Paid for services",
+  ref_no: "abc124",
+  amount: Decimal.new(1, 4200, 2)
+})
+
+Invoix.Repo.insert!(%Invoix.Financials.Transcation{
+  date: DateTime.utc_now() |> DateTime.add(86400, :second) |> DateTime.truncate(:second),
+  description: "Paid for services",
+  ref_no: "abc125",
+  amount: Decimal.new(1, 2400, 2)
+})
