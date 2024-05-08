@@ -1,7 +1,6 @@
 import React from "react";
 import { getInvoices } from "../api";
 import { useQuery } from "@tanstack/react-query";
-import { InvoiceItem } from "./InvoiceItem";
 import {
   createColumnHelper,
   flexRender,
@@ -28,7 +27,7 @@ const columns = [
   }),
   columnHelper.accessor("status", {
     header: () => "Status",
-    cell: (props) => (props.getValue() === "PAID" ? "PAID" : "NOT PAID"),
+    cell: (props) => (props.getValue() === "paid" ? "Paid" : "Not Paid"),
   }),
 ];
 
@@ -59,7 +58,10 @@ export function Invoices() {
           {table.getHeaderGroups().map((headerGroup) => (
             <tr key={headerGroup.id}>
               {headerGroup.headers.map((header) => (
-                <th key={header.id} className="border-gray-300 border-2 rounded w-40">
+                <th
+                  key={header.id}
+                  className="border-gray-300 border-2 rounded w-40"
+                >
                   {header.isPlaceholder
                     ? null
                     : flexRender(

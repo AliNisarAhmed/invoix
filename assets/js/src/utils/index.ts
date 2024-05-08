@@ -27,5 +27,7 @@ export function mapInvoiceDTO(invoices: InvoiceDTO[]): Invoice[] {
   return invoices.map((inv) => ({
     ...inv,
     date: dayjs(inv.date, "YYYY-MM-DD"),
+    clientName: inv.client_name,
+    refNo: inv.ref_no,
   }));
 }

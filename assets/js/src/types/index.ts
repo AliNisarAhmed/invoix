@@ -22,11 +22,11 @@ export type Invoice = {
   status: InvoiceStatus;
 };
 
-export type InvoiceStatus = "PAID" | "NOT_PAID";
+export type InvoiceStatus = "paid" | "not_paid";
 
 export type InvoiceDTO = {
-  refNo: string;
-  clientName: string;
+  ref_no: string;
+  client_name: string;
   date: string;
   amount: string;
   status: InvoiceStatus;
@@ -41,4 +41,4 @@ export type CurrentUser = {
 export type UserSessionRequest = {
   email: string;
   password: string;
-}
+};
