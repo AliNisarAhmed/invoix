@@ -1,5 +1,7 @@
 import dayjs, { Dayjs } from "dayjs";
 import { Invoice, InvoiceDTO, Transaction, TransactionDTO } from "../types";
+import { clsx, type ClassValue } from "clsx";
+import { twMerge } from "tailwind-merge";
 
 export function transactionsBeforeDate(
   transactions: Transaction[],
@@ -30,4 +32,8 @@ export function mapInvoiceDTO(invoices: InvoiceDTO[]): Invoice[] {
     clientName: inv.client_name,
     refNo: inv.ref_no,
   }));
+}
+
+export function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs));
 }

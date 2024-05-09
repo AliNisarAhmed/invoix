@@ -10,7 +10,10 @@ export function Login() {
   const queryClient = useQueryClient();
   const mutation = useMutation({
     mutationFn: loginUser,
-    onSuccess: (data) => queryClient.setQueryData(["currentUser"], data),
+    onSuccess: (data) => {
+      queryClient.setQueryData(["currentUser"], data);
+      setLocation("/");
+    },
   });
 
   return (
@@ -38,11 +41,10 @@ export function Login() {
     </div>
   );
 
-  async function handleSubmit(e: any) {
+  function handleSubmit(e: any) {
     e.preventDefault();
     try {
-      await mutation.mutateAsync({ email, password });
-      setLocation("/");
+      mutation.mutate({ email, password });
     } catch (error) {
       console.error(error);
     }
