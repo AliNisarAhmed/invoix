@@ -13,7 +13,7 @@ export function transactionsBeforeDate(
 export function totalAmount(transactions: Transaction[]): number {
   return transactions
     .map((tr) => Number(tr.amount))
-    .reduce((acc, x) => acc + x);
+    .reduce((acc, x) => acc + x, 0);
 }
 
 export function mapTransactionDTO(
