@@ -17,7 +17,8 @@ defmodule Invoix.Application do
       # Start a worker by calling: Invoix.Worker.start_link(arg)
       # {Invoix.Worker, arg},
       # Start to serve requests, typically the last entry
-      InvoixWeb.Endpoint
+      InvoixWeb.Endpoint,
+      {Invoix.Financials.InvoiceRef, 1}
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

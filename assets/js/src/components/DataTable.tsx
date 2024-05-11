@@ -23,7 +23,6 @@ import { Button } from "./Button";
 import { Input } from "./Input";
 import {
   Sheet,
-  SheetClose,
   SheetContent,
   SheetDescription,
   SheetFooter,
@@ -47,7 +46,9 @@ import { Calendar } from "./Calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "./Popover";
 import { cn } from "../utils";
 import { format } from "date-fns";
-import { CalendarIcon } from "@radix-ui/react-icons";
+import { CalendarIcon, ReloadIcon } from "@radix-ui/react-icons";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { postInvoice } from "../api";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -60,6 +61,7 @@ export function DataTable<TData, TValue>({
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+  const [sheetOpen, setSheetOpen] = useState<boolean>(false);
 
   const table = useReactTable({
     data,
@@ -90,6 +92,17 @@ export function DataTable<TData, TValue>({
     },
   });
 
+  const queryClient = useQueryClient();
+  const mutation = useMutation({
+    mutationFn: postInvoice,
+    onSuccess: () => {
+      setSheetOpen(false);
+      form.reset();
+      queryClient.invalidateQueries({ queryKey: ["invoices"] });
+      mutation.reset();
+    },
+  });
+
   return (
     <div>
       <div className="flex items-center py-4">
@@ -103,7 +116,7 @@ export function DataTable<TData, TValue>({
           }
           className="max-w-sm"
         />
-        <Sheet>
+        <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
           <SheetTrigger className="ml-auto bg-green-600 py-2 px-4 rounded text-white">
             Create Invoice
           </SheetTrigger>
@@ -197,9 +210,14 @@ export function DataTable<TData, TValue>({
               </form>
             </Form>
             <SheetFooter>
-              <SheetClose onClick={form.handleSubmit(onSubmit)}>
-                Save changes
-              </SheetClose>
+              {mutation.status === "idle" ? (
+                <Button onClick={form.handleSubmit(onSubmit)}>Save</Button>
+              ) : mutation.status === "pending" ? (
+                <Button disabled>
+                  <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
+                  Saving...
+                </Button>
+              ) : null}
             </SheetFooter>
           </SheetContent>
         </Sheet>
@@ -278,5 +296,6 @@ export function DataTable<TData, TValue>({
   async function onSubmit(values: z.infer<typeof formSchema>) {
     console.log({ values });
     console.log(form.formState.errors);
+    await mutation.mutateAsync(values);
   }
 }

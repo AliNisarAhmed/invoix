@@ -16,6 +16,10 @@ import { DropdownMenuItem } from "./Dropdown";
 
 const columns: ColumnDef<Invoice>[] = [
   {
+    accessorKey: "refNo",
+    header: "Ref #",
+  },
+  {
     accessorKey: "clientName",
     header: ({ column }) => {
       return (

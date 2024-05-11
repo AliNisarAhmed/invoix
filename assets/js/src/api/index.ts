@@ -1,4 +1,5 @@
 import {
+  CreateInvoiceRequest,
   CurrentUser,
   Invoice,
   Transaction,
@@ -52,4 +53,21 @@ export async function registerUser({ email, password }: UserSessionRequest) {
     body: JSON.stringify({ user: { email, password } }),
   });
   return (await resp.json()) as CurrentUser;
+}
+
+export async function postInvoice({
+  clientName,
+  date,
+  amount,
+}: CreateInvoiceRequest) {
+  const res = await fetch("/api/invoice", {
+    method: "POST",
+    credentials: "same-origin",
+    headers: {
+      "Content-Type": "application/json; chartset=utf-8",
+    },
+    body: JSON.stringify({ clientName, date, amount }),
+  });
+
+  return (await res.json()) as { success: boolean };
 }

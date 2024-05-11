@@ -42,3 +42,9 @@ export type UserSessionRequest = {
   email: string;
   password: string;
 };
+
+export type CreateInvoiceRequest = {
+  clientName: string;
+  amount: number;
+  date: Date;
+};
