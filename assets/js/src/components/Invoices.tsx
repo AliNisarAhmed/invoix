@@ -13,6 +13,7 @@ import {
 import { Button } from "./Button";
 import { ArrowUpDown, MoreHorizontal } from "lucide-react";
 import { DropdownMenuItem, DropdownMenuSeparator } from "./Dropdown";
+import { useInvoices } from "../hooks/useInvoices";
 
 const columns: ColumnDef<Invoice>[] = [
   {
@@ -127,17 +128,15 @@ const columns: ColumnDef<Invoice>[] = [
 ];
 
 export function Invoices() {
-  const { data, isError, isPending } = useQuery({
-    queryKey: ["invoices"],
-    queryFn: getInvoices,
-  });
+  const { data, isError, isPending } = useInvoices();
 
   if (isError) {
     return <div>Error fetching invoices</div>;
   }
 
   if (isPending) {
-    return <p>Loading...</p>;
+    // TODO: change to skeleton
+    return null;
   }
 
   return (

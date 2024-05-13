@@ -1,41 +1,48 @@
 import React from "react";
 import dayjs from "dayjs";
-import { Transaction } from "../types";
-import { totalAmount, transactionsBeforeDate } from "../utils";
-import { useQuery } from "@tanstack/react-query";
-import { getTransactions } from "../api";
+import { Invoice, Transaction } from "../types";
+import {
+  invoicesAfterDate,
+  totalRevenue,
+} from "../utils";
+import { useInvoices } from "../hooks/useInvoices";
+import { useTransactions } from "../hooks/useTransactions";
 
 export function Summary() {
-  const { data, isError, isPending } = useQuery({
-    queryKey: ["transactions"],
-    queryFn: getTransactions,
-  });
+  const {
+    data: invoicesData,
+    isPending: isInvoicesPending,
+    isError: isInvoicesError,
+  } = useInvoices();
 
-  const transactions = isPending
+  const {
+    data: transactionsData,
+    isPending: isTransactionsPending,
+    isError: isTransactionsError,
+  } = useTransactions();
+
+  const filteredInvoices = isInvoicesPending
     ? []
-    : transactionsBeforeDate(
-      data as Transaction[],
-      dayjs().subtract(30, "day"),
-    );
-  const total = isPending ? 0 : totalAmount(transactions);
+    : invoicesAfterDate(invoicesData as Invoice[], dayjs().subtract(30, "day"));
+  const total = isInvoicesPending ? 0 : totalRevenue(filteredInvoices);
 
-  if (isPending) {
+  if (isInvoicesPending || isTransactionsPending) {
     return <div>Loading...</div>;
   }
 
-  if (isError) {
+  if (isInvoicesError || isTransactionsError) {
     return <div>Error fetching Transactions</div>;
   }
 
   return (
     <div className="bg-gray-300 border-black border-1 px-10">
       <div className="flex flex-col items-center">
-        <h2 className="w-max border-black border-1 text-5xl">${total}</h2>
-        <span className="text-sm">Total income in the last 30 days</span>
+        <h2 className="w-max border-black border-1 text-5xl">${total / 100}</h2>
+        <span className="text-sm">Total Revenue in the last 30 days</span>
       </div>
       <div className="flex flex-col items-center">
-        <h2 className="text-3xl">{transactions.length}</h2>
-        <span className="text-sm">Transactions in the last 30 days</span>
+        <h2 className="text-3xl">{filteredInvoices.length}</h2>
+        <span className="text-sm">Invoices in the last 30 days</span>
       </div>
     </div>
   );
