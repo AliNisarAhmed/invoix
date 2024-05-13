@@ -12,7 +12,7 @@ import {
 } from "@radix-ui/react-dropdown-menu";
 import { Button } from "./Button";
 import { ArrowUpDown, MoreHorizontal } from "lucide-react";
-import { DropdownMenuItem } from "./Dropdown";
+import { DropdownMenuItem, DropdownMenuSeparator } from "./Dropdown";
 
 const columns: ColumnDef<Invoice>[] = [
   {
@@ -107,8 +107,12 @@ const columns: ColumnDef<Invoice>[] = [
               <MoreHorizontal className="h-4 w-4" />
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
+          <DropdownMenuContent
+            align="end"
+            className="w-56 bg-white border-2 border-gray-100 p-4 rounded"
+          >
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
+            <DropdownMenuSeparator />
             <DropdownMenuItem
               onClick={() => navigator.clipboard.writeText(invoice.refNo)}
             >

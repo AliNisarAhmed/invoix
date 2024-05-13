@@ -18,7 +18,7 @@ export const App = () => {
           <Route path="/register" component={Register} />
           <Route path="/">
             <Auth>
-              <div className="">
+              <div className="w-10/12 mx-auto">
                 <Summary />
                 <Invoices />
               </div>

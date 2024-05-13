@@ -15,6 +15,8 @@ defmodule InvoixWeb.Router do
 
   pipeline :api do
     plug :accepts, ["json"]
+    plug :fetch_session
+    plug :fetch_current_user
   end
 
   pipeline :auth do
@@ -24,7 +26,7 @@ defmodule InvoixWeb.Router do
   end
 
   scope "/api", InvoixWeb do
-    pipe_through :api
+    pipe_through [:api, :require_authenticated_user]
 
     get "/transactions", TransactionController, :transactions
     get "/invoices", InvoiceController, :getInvoices

@@ -5,15 +5,17 @@ defmodule Invoix.Financials do
   alias Invoix.Financials.Invoice
   alias Invoix.Repo
 
-  def get_invoices() do
-    Repo.all(Invoice)
+  def get_invoices(user_id) do
+    Repo.all(from inv in Invoice, where: inv.user_id == ^user_id)
   end
 
   def get_transactions() do
     Repo.all(Transcation)
   end
 
-  def create_invoice(%{amount: amount, dateString: dateString, clientName: clientName}) do
+  def create_invoice(%{amount: amount, dateString: dateString, clientName: clientName},
+        user_id: user_id
+      ) do
     {:ok, date, _} = DateTime.from_iso8601(dateString)
 
     %Invoice{}
@@ -22,13 +24,10 @@ defmodule Invoix.Financials do
       date: date,
       client_name: clientName,
       ref_no: get_next_invoice_ref(),
-      status: "not_paid"
+      status: "not_paid",
+      user_id: user_id
     })
     |> Repo.insert()
-  end
-
-  def get_last_invoice() do
-    Invoice |> last(:inserted_at) |> Repo.one()
   end
 
   def get_next_invoice_ref() do

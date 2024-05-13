@@ -1,26 +1,24 @@
 defmodule InvoixWeb.InvoiceController do
+  alias Invoix.Accounts.User
   alias Invoix.Financials
   use InvoixWeb, :controller
 
   def getInvoices(conn, _) do
-    invoices = Financials.get_invoices()
-    render(conn, :getInvoices, invoices: invoices)
+    with %User{id: user_id} <- conn.assigns.current_user do
+      invoices = Financials.get_invoices(user_id)
+      render(conn, :getInvoices, invoices: invoices)
+    end
   end
 
   def createInvoice(conn, _) do
-    dbg(conn.params)
-
     input = %{
       amount: conn.params["amount"],
       dateString: to_string(conn.params["date"]),
       clientName: to_string(conn.params["clientName"])
     }
 
-    last_invoice_ref_no = Financials.get_last_invoice()
-    dbg(last_invoice_ref_no)
-
-    with {:ok, new_invoice} <- Financials.create_invoice(input) do
-      dbg(new_invoice)
+    with %User{id: id} <- conn.assigns.current_user,
+         {:ok, _new_invoice} <- Financials.create_invoice(input, user_id: id) do
       json(conn, %{success: true})
     else
       e ->

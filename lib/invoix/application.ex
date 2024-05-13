@@ -18,7 +18,7 @@ defmodule Invoix.Application do
       # {Invoix.Worker, arg},
       # Start to serve requests, typically the last entry
       InvoixWeb.Endpoint,
-      {Invoix.Financials.InvoiceRef, 1}
+      {Invoix.Financials.InvoiceRef, 2000}
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
