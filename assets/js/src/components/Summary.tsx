@@ -1,12 +1,17 @@
 import React from "react";
 import dayjs from "dayjs";
 import { Invoice, Transaction } from "../types";
-import {
-  invoicesAfterDate,
-  totalRevenue,
-} from "../utils";
+import { invoicesAfterDate, totalRevenue } from "../utils";
 import { useInvoices } from "../hooks/useInvoices";
 import { useTransactions } from "../hooks/useTransactions";
+import { Card, CardContent, CardHeader, CardTitle } from "./Card";
+import {
+  BadgeDollarSign,
+  CreditCard,
+  DollarSign,
+  Receipt,
+  ReceiptText,
+} from "lucide-react";
 
 export function Summary() {
   const {
@@ -25,6 +30,11 @@ export function Summary() {
     ? []
     : invoicesAfterDate(invoicesData as Invoice[], dayjs().subtract(30, "day"));
   const total = isInvoicesPending ? 0 : totalRevenue(filteredInvoices);
+  const totalString = new Intl.NumberFormat("en-us", {
+    style: "currency",
+    currency: "USD",
+    useGrouping: true,
+  }).format(total / 100);
 
   if (isInvoicesPending || isTransactionsPending) {
     return <div>Loading...</div>;
@@ -35,15 +45,62 @@ export function Summary() {
   }
 
   return (
-    <div className="bg-gray-300 border-black border-1 px-10">
-      <div className="flex flex-col items-center">
-        <h2 className="w-max border-black border-1 text-5xl">${total / 100}</h2>
-        <span className="text-sm">Total Revenue in the last 30 days</span>
+    <>
+      <h3>In the last 30 days</h3>
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Total Revenue</CardTitle>
+            <DollarSign className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{totalString}</div>
+            <p className="text-xs text-muted-foreground">
+              +20.1% from last month
+            </p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">
+              Total Invoices
+            </CardTitle>
+            <ReceiptText className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{filteredInvoices.length}</div>
+            <p className="text-xs text-muted-foreground">
+              +20.1% from last month
+            </p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Total Income</CardTitle>
+            <CreditCard className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{0}</div>
+            <p className="text-xs text-muted-foreground">
+              No change from last month
+            </p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">
+              Total Transactions
+            </CardTitle>
+            <Receipt className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{0}</div>
+            <p className="text-xs text-muted-foreground">
+              No change from last month
+            </p>
+          </CardContent>
+        </Card>
       </div>
-      <div className="flex flex-col items-center">
-        <h2 className="text-3xl">{filteredInvoices.length}</h2>
-        <span className="text-sm">Invoices in the last 30 days</span>
-      </div>
-    </div>
+    </>
   );
 }
