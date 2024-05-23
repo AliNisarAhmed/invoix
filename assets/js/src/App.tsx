@@ -7,6 +7,7 @@ import { Route, Switch } from "wouter";
 import { Login } from "./components/Login";
 import { Register } from "./components/Register";
 import { Auth } from "./components/Auth";
+import { UserNav } from "./components/UserNav";
 
 export const App = () => {
   const queryClient = new QueryClient();
@@ -19,6 +20,7 @@ export const App = () => {
           <Route path="/">
             <Auth>
               <div className="w-10/12 mx-auto">
+                <UserNav />
                 <Summary />
                 <Invoices />
               </div>

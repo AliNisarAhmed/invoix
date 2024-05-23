@@ -71,3 +71,15 @@ export async function postInvoice({
 
   return (await res.json()) as { success: boolean };
 }
+
+export async function logoutUser() {
+  const resp = await fetch("/auth/logout", {
+    method: "POST",
+    credentials: "same-origin",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    referrerPolicy: "no-referrer",
+  });
+  return await resp.json();
+}

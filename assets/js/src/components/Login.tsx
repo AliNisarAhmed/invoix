@@ -1,5 +1,5 @@
 import React from "react";
-import { useLocation } from "wouter";
+import { Redirect, useLocation } from "wouter";
 import { loginUser } from "../api";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
@@ -18,8 +18,6 @@ import { Input } from "./Input";
 import { Button } from "./Button";
 
 export function Login() {
-  const [location, setLocation] = useLocation();
-
   const formSchema = z.object({
     email: z.string().email(),
     password: z.string(),
@@ -31,8 +29,14 @@ export function Login() {
   const queryClient = useQueryClient();
   const mutation = useMutation({
     mutationFn: loginUser,
-    onSuccess: (data) => queryClient.setQueryData(["currentUser"], data),
+    onSuccess: (data) => {
+      queryClient.setQueryData(["currentUser"], data);
+    },
   });
+
+  if (mutation.isSuccess) {
+    return <Redirect to="/" replace />;
+  }
 
   return (
     <>
@@ -91,8 +95,7 @@ export function Login() {
 
   async function handleSubmit({ email, password }: z.infer<typeof formSchema>) {
     try {
-      await mutation.mutateAsync({ email, password });
-      setLocation("/");
+      mutation.mutate({ email, password });
     } catch (error) {
       console.error(error);
     }

@@ -32,8 +32,9 @@ defmodule InvoixWeb.UserSessionController do
 
   def delete(conn, _params) do
     conn
-    |> put_flash(:info, "Logged out successfully.")
     |> UserAuth.log_out_user()
+
+    conn
   end
 
   def current_user(conn, _params) do

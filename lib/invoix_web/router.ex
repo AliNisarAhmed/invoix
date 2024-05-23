@@ -58,6 +58,7 @@ defmodule InvoixWeb.Router do
     get "/users/current-user", UserSessionController, :current_user
     post "/register", UserRegistrationController, :register
     post "/login", UserSessionController, :login
+    post "/logout", UserSessionController, :delete
   end
 
   scope "/", InvoixWeb do
