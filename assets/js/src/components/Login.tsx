@@ -30,13 +30,6 @@ export function Login() {
   const queryClient = useQueryClient();
   const mutation = useMutation({
     mutationFn: loginUser,
-    onSuccess: (data) => {
-      queryClient.setQueryData(["currentUser"], data);
-      setLocation("/", { replace: true });
-    },
-    onError: (e, x, y) => {
-      form.setError("root.serverError", { message: e.message });
-    },
   });
 
   if (mutation.isSuccess) {
@@ -54,9 +47,7 @@ export function Login() {
             <Form {...form}>
               <form
                 className="space-y-8"
-                onSubmit={form.handleSubmit(
-                  async (data) => await handleSubmit(data),
-                )}
+                onSubmit={form.handleSubmit(handleSubmit)}
               >
                 <FormField
                   control={form.control}
@@ -103,12 +94,18 @@ export function Login() {
     </>
   );
 
-  async function handleSubmit({ email, password }: z.infer<typeof formSchema>) {
+  async function handleSubmit(
+    { email, password }: z.infer<typeof formSchema>,
+    e: any,
+  ) {
+    e.preventDefault();
     try {
       form.clearErrors();
-      mutation.mutate({ email, password });
-    } catch (error) {
-      console.error(error);
+      const data = await mutation.mutateAsync({ email, password });
+      queryClient.setQueryData(["currentUser"], data);
+      setLocation("/", { replace: true });
+    } catch (e) {
+      form.setError("root.serverError", { message: e.message });
     }
   }
 }

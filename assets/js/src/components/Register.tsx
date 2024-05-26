@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { Redirect, useLocation } from "wouter";
 import { registerUser } from "../api";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -37,10 +37,6 @@ export function Register() {
   const queryClient = useQueryClient();
   const mutation = useMutation({
     mutationFn: registerUser,
-    onSuccess: (data) => {
-      queryClient.setQueryData(["currentUser"], data);
-      setLocation("/", { replace: true });
-    },
   });
 
   if (mutation.isSuccess) {
@@ -58,9 +54,7 @@ export function Register() {
             <Form {...form}>
               <form
                 className="space-y-8"
-                onSubmit={form.handleSubmit(
-                  async (data) => await handleSubmit(data),
-                )}
+                onSubmit={form.handleSubmit(handleSubmit)}
               >
                 <FormField
                   control={form.control}
@@ -101,6 +95,11 @@ export function Register() {
                     </FormItem>
                   )}
                 ></FormField>
+                {form.formState.errors.root?.serverError && (
+                  <FormMessage>
+                    {form.formState.errors.root?.serverError?.message}
+                  </FormMessage>
+                )}
                 <Button
                   className="w-full"
                   onClick={form.handleSubmit(handleSubmit)}
@@ -115,12 +114,17 @@ export function Register() {
     </>
   );
 
-  async function handleSubmit({ email, password }: z.infer<typeof formSchema>) {
+  async function handleSubmit(
+    { email, password }: z.infer<typeof formSchema>,
+    e: any,
+  ) {
+    e.preventDefault();
     try {
-      await mutation.mutateAsync({ email, password });
-      setLocation("/");
-    } catch (error) {
-      console.error(error);
+      const data = await mutation.mutateAsync({ email, password });
+      queryClient.setQueryData(["currentUser"], data);
+      setLocation("/", { replace: true });
+    } catch (e) {
+      form.setError(e.errorInfo.field, { message: e.errorInfo.message });
     }
   }
 }

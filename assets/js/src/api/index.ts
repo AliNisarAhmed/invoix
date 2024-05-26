@@ -1,3 +1,4 @@
+import { ApiFormError } from "../errors";
 import {
   CreateInvoiceRequest,
   CurrentUser,
@@ -60,7 +61,7 @@ export async function registerUser({ email, password }: UserSessionRequest) {
   });
   const json = await resp.json();
   if (!resp.ok) {
-    throw new Error(`${json?.error}`);
+    throw new ApiFormError(json?.errors[0]);
   }
   return json as CurrentUser;
 }
