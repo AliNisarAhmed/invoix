@@ -18,9 +18,10 @@ import { Input } from "./Input";
 import { Button } from "./Button";
 
 export function Login() {
+  const [location, setLocation] = useLocation();
   const formSchema = z.object({
-    email: z.string().email(),
-    password: z.string(),
+    email: z.string().min(1, "Email is required").email(),
+    password: z.string().min(1, "Password is required"),
   });
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -31,6 +32,10 @@ export function Login() {
     mutationFn: loginUser,
     onSuccess: (data) => {
       queryClient.setQueryData(["currentUser"], data);
+      setLocation("/", { replace: true });
+    },
+    onError: (e, x, y) => {
+      form.setError("root.serverError", { message: e.message });
     },
   });
 
@@ -79,6 +84,11 @@ export function Login() {
                     </FormItem>
                   )}
                 ></FormField>
+                {form.formState.errors.root?.serverError && (
+                  <FormMessage>
+                    {form.formState.errors.root?.serverError?.message}
+                  </FormMessage>
+                )}
                 <Button
                   className="w-full"
                   onClick={form.handleSubmit(handleSubmit)}
@@ -95,6 +105,7 @@ export function Login() {
 
   async function handleSubmit({ email, password }: z.infer<typeof formSchema>) {
     try {
+      form.clearErrors();
       mutation.mutate({ email, password });
     } catch (error) {
       console.error(error);

@@ -84,8 +84,6 @@ defmodule InvoixWeb.UserAuth do
     conn
     |> renew_session()
     |> delete_resp_cookie(@remember_me_cookie)
-
-    json(conn, %{})
   end
 
   @doc """

@@ -1,5 +1,4 @@
 defmodule InvoixWeb.TransactionController do
-  alias Ecto.Repo.Transaction
   alias Invoix.Financials
   use InvoixWeb, :controller
 

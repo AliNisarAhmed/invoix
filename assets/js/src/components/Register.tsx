@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useLocation } from "wouter";
+import { Redirect, useLocation } from "wouter";
 import { registerUser } from "../api";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
@@ -37,8 +37,15 @@ export function Register() {
   const queryClient = useQueryClient();
   const mutation = useMutation({
     mutationFn: registerUser,
-    onSuccess: (data) => queryClient.setQueryData(["currentUser"], data),
+    onSuccess: (data) => {
+      queryClient.setQueryData(["currentUser"], data);
+      setLocation("/", { replace: true });
+    },
   });
+
+  if (mutation.isSuccess) {
+    return <Redirect to="/" replace />;
+  }
 
   return (
     <>

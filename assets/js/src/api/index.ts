@@ -38,7 +38,13 @@ export async function loginUser({ email, password }: UserSessionRequest) {
     referrerPolicy: "no-referrer",
     body: JSON.stringify({ user: { email, password } }),
   });
-  return (await resp.json()) as CurrentUser;
+  const json = await resp.json();
+
+  if (!resp.ok) {
+    throw new Error(`${json?.error}`);
+  }
+
+  return json as CurrentUser;
 }
 
 export async function registerUser({ email, password }: UserSessionRequest) {
@@ -52,7 +58,11 @@ export async function registerUser({ email, password }: UserSessionRequest) {
     referrerPolicy: "no-referrer",
     body: JSON.stringify({ user: { email, password } }),
   });
-  return (await resp.json()) as CurrentUser;
+  const json = await resp.json();
+  if (!resp.ok) {
+    throw new Error(`${json?.error}`);
+  }
+  return json as CurrentUser;
 }
 
 export async function postInvoice({
@@ -73,7 +83,7 @@ export async function postInvoice({
 }
 
 export async function postTransaction(invoice: Invoice) {
-  const res = await fetch(`/api/invoices/${invoice.refNo}/transaction`, {
+  const res = await fetch(`/ api / invoices / ${invoice.refNo} / transaction`, {
     method: "POST",
     credentials: "same-origin",
     headers: {
