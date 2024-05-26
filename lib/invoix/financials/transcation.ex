@@ -19,5 +19,7 @@ defmodule Invoix.Financials.Transcation do
     transcation
     |> cast(attrs, [:ref_no, :date, :description, :amount])
     |> validate_required([:ref_no, :date, :description, :amount])
+    |> unique_constraint(:ref_no)
   end
+
 end

@@ -20,4 +20,9 @@ defmodule Invoix.Financials.Invoice do
     |> cast(attrs, [:ref_no, :client_name, :date, :amount, :status, :user_id])
     |> validate_required([:ref_no, :client_name, :date, :amount, :status, :user_id])
   end
+
+  def update_status_changeset(invoice, new_status) do
+    invoice
+    |> change(status: new_status)
+  end
 end

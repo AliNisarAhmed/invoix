@@ -72,6 +72,18 @@ export async function postInvoice({
   return (await res.json()) as { success: boolean };
 }
 
+export async function postTransaction(invoice: Invoice) {
+  const res = await fetch(`/api/invoices/${invoice.refNo}/transaction`, {
+    method: "POST",
+    credentials: "same-origin",
+    headers: {
+      "Content-Type": "application/json; charset=utf-8",
+    },
+  });
+
+  return await res.json();
+}
+
 export async function logoutUser() {
   const resp = await fetch("/auth/logout", {
     method: "POST",

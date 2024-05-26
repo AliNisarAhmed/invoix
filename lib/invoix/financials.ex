@@ -13,6 +13,10 @@ defmodule Invoix.Financials do
     Repo.all(Transcation)
   end
 
+  def get_invoice_by_refno(invoice_refno) do
+    Repo.get_by!(Invoice, ref_no: invoice_refno)
+  end
+
   def create_invoice(%{amount: amount, dateString: dateString, clientName: clientName},
         user_id: user_id
       ) do
@@ -28,6 +32,25 @@ defmodule Invoix.Financials do
       user_id: user_id
     })
     |> Repo.insert()
+  end
+
+  def create_transaction!(%Invoice{ref_no: ref_no, amount: amount} = invoice) do
+    Repo.transaction(fn ->
+      {:ok, now} = DateTime.now("Etc/UTC")
+
+      %Invoix.Financials.Transcation{}
+      |> Invoix.Financials.Transcation.changeset(%{
+        ref_no: ref_no,
+        date: now,
+        amount: amount,
+        description: "Transaction for Invoice #{ref_no}"
+      })
+      |> Repo.insert!()
+
+      invoice
+      |> Invoice.update_status_changeset("paid")
+      |> Repo.update!()
+    end)
   end
 
   def get_next_invoice_ref() do

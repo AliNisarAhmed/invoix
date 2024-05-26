@@ -29,6 +29,7 @@ defmodule InvoixWeb.Router do
     pipe_through [:api, :require_authenticated_user]
 
     get "/transactions", TransactionController, :transactions
+    post "/invoices/:invoice_refno/transaction", TransactionController, :createTransaction
     get "/invoices", InvoiceController, :getInvoices
     post "/invoice", InvoiceController, :createInvoice
   end
