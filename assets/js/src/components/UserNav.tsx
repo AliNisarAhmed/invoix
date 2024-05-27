@@ -13,8 +13,10 @@ import { Avatar, AvatarFallback } from "./Avatar";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Redirect, useLocation } from "wouter";
 import { logoutUser } from "../api";
+import { useCurrentUser } from "../context/CurrentUserContext";
 
 export function UserNav() {
+  const { currentUser, setCurrentUser } = useCurrentUser();
   const [location, setLocation] = useLocation();
   const queryClient = useQueryClient();
 
@@ -43,7 +45,7 @@ export function UserNav() {
           <div className="flex flex-col space-y-1">
             <p className="text-sm font-medium leading-none">Guest</p>
             <p className="text-xs leading-none text-muted-foreground">
-              guest@guest.com
+              {currentUser?.email}
             </p>
           </div>
         </DropdownMenuLabel>
@@ -65,5 +67,6 @@ export function UserNav() {
 
   async function handleLogout() {
     await mutation.mutateAsync();
+    setCurrentUser(null);
   }
 }

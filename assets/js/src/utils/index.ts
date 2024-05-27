@@ -47,3 +47,12 @@ export function mapInvoiceDTO(invoices: InvoiceDTO[]): Invoice[] {
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
+
+export function getCookieObject() {
+  return Object.fromEntries(
+    document.cookie.split(/; */).map((c) => {
+      const [key, ...v] = c.split("=");
+      return [key, decodeURIComponent(v.join("="))];
+    }),
+  );
+}

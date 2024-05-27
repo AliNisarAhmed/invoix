@@ -3,11 +3,7 @@ import { useCurrentUser } from "../context/CurrentUserContext";
 import { Redirect } from "wouter";
 
 export function Auth({ children }) {
-  const { currentUser, isPending } = useCurrentUser();
-
-  if (isPending) {
-    return <p>Loading...</p>;
-  }
+  const { currentUser } = useCurrentUser();
 
   if (!currentUser) {
     return <Redirect to="/login" replace />;

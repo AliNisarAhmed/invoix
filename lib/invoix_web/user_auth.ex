@@ -12,6 +12,8 @@ defmodule InvoixWeb.UserAuth do
   @max_age 60 * 60 * 24 * 60
   @remember_me_cookie "_invoix_web_user_remember_me"
   @remember_me_options [sign: true, max_age: @max_age, same_site: "Lax"]
+  @current_user_cookie "_invoix_web_current_user"
+  @current_user_cookie_options [max_age: @max_age, http_only: false, same_site: "Lax"]
 
   @doc """
   Logs the user in.
@@ -34,11 +36,23 @@ defmodule InvoixWeb.UserAuth do
       |> renew_session()
       |> put_token_in_session(token)
       |> maybe_write_remember_me_cookie(token, params)
+      |> write_current_user_cookie(user)
       |> fetch_current_user([])
 
     current_user = Map.get(conn.assigns, :current_user)
 
     json(conn, %{currentUser: %{email: current_user.email}})
+  end
+
+  defp write_current_user_cookie(conn, current_user) do
+    {:ok, cookie_val} = Jason.encode(%{email: current_user.email})
+
+    put_resp_cookie(
+      conn,
+      @current_user_cookie,
+      Base.encode64(cookie_val),
+      @current_user_cookie_options
+    )
   end
 
   defp maybe_write_remember_me_cookie(conn, token, %{"remember_me" => "true"}) do
@@ -83,6 +97,7 @@ defmodule InvoixWeb.UserAuth do
 
     conn
     |> renew_session()
+    |> delete_resp_cookie(@current_user_cookie, @current_user_cookie_options)
     |> delete_resp_cookie(@remember_me_cookie)
   end
 
@@ -206,7 +221,6 @@ defmodule InvoixWeb.UserAuth do
       conn
     else
       conn
-      |> put_flash(:error, "You must log in to access this page.")
       |> maybe_store_return_to()
       |> redirect(to: ~p"/users/log_in")
       |> halt()

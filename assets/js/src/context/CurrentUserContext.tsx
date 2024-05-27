@@ -1,18 +1,15 @@
 import React from "react";
 import { CurrentUser } from "../types";
-import { useQuery } from "@tanstack/react-query";
-import { getCurrentUser } from "../api";
+import { getCookieObject } from "../utils";
 
 type CurrentUserContext = {
   currentUser: CurrentUser | undefined | null;
-  isPending: boolean;
-  isError: boolean;
+  setCurrentUser: React.Dispatch<CurrentUser | undefined | null>;
 };
 
 const CurrentUserContext = React.createContext<CurrentUserContext>({
   currentUser: undefined,
-  isPending: true,
-  isError: false,
+  setCurrentUser: () => undefined,
 });
 
 function useCurrentUser() {
@@ -25,20 +22,22 @@ function useCurrentUser() {
 }
 
 function CurrentUserProvider({ children }) {
-  const {
-    data: currentUser,
-    isPending,
-    isError,
-  } = useQuery({
-    queryKey: ["current-user"],
-    queryFn: getCurrentUser,
-  });
-
+  const [currentUser, setCurrentUser] = React.useState<
+    CurrentUser | null | undefined
+  >(() => getCurrentUser());
   return (
-    <CurrentUserContext.Provider value={{ currentUser, isPending, isError }}>
+    <CurrentUserContext.Provider value={{ currentUser, setCurrentUser }}>
       {children}
     </CurrentUserContext.Provider>
   );
+}
+
+function getCurrentUser() {
+  const cookieObject = getCookieObject();
+  const currentUserCookie = cookieObject["_invoix_web_current_user"];
+  if (currentUserCookie) {
+    return JSON.parse(atob(currentUserCookie));
+  }
 }
 
 export { CurrentUserProvider, useCurrentUser };

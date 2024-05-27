@@ -22,13 +22,6 @@ export async function getInvoices() {
   return mapInvoiceDTO(data.invoices) as Invoice[];
 }
 
-export async function getCurrentUser() {
-  const resp = await fetch("/auth/users/current-user");
-  const data = await resp.json();
-
-  return data.currentUser as CurrentUser;
-}
-
 export async function loginUser({ email, password }: UserSessionRequest) {
   const resp = await fetch("/auth/login", {
     method: "POST",
