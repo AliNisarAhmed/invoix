@@ -16,8 +16,10 @@ import {
 } from "./Form";
 import { Input } from "./Input";
 import { Button } from "./Button";
+import { useCurrentUser } from "../context/CurrentUserContext";
 
 export function Login() {
+  const { currentUser, setCurrentUser } = useCurrentUser();
   const [location, setLocation] = useLocation();
   const formSchema = z.object({
     email: z.string().min(1, "Email is required").email(),
@@ -32,7 +34,7 @@ export function Login() {
     mutationFn: loginUser,
   });
 
-  if (mutation.isSuccess) {
+  if (mutation.isSuccess || currentUser) {
     return <Redirect to="/" replace />;
   }
 
@@ -98,11 +100,13 @@ export function Login() {
     { email, password }: z.infer<typeof formSchema>,
     e: any,
   ) {
+    console.log({ e });
     e.preventDefault();
+    console.log({ e });
     try {
       form.clearErrors();
       const data = await mutation.mutateAsync({ email, password });
-      queryClient.setQueryData(["currentUser"], data);
+      setCurrentUser(data);
       setLocation("/", { replace: true });
     } catch (e) {
       form.setError("root.serverError", { message: e.message });

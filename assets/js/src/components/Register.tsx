@@ -16,8 +16,10 @@ import {
 } from "./Form";
 import { Input } from "./Input";
 import { Button } from "./Button";
+import { useCurrentUser } from "../context/CurrentUserContext";
 
 export function Register() {
+  const { currentUser, setCurrentUser } = useCurrentUser();
   const [location, setLocation] = useLocation();
 
   const formSchema = z
@@ -39,7 +41,7 @@ export function Register() {
     mutationFn: registerUser,
   });
 
-  if (mutation.isSuccess) {
+  if (mutation.isSuccess || currentUser) {
     return <Redirect to="/" replace />;
   }
 
@@ -121,8 +123,8 @@ export function Register() {
     e.preventDefault();
     try {
       const data = await mutation.mutateAsync({ email, password });
-      queryClient.setQueryData(["currentUser"], data);
-      setLocation("/", { replace: true });
+      setCurrentUser(data);
+      setLocation("/invoices", { replace: true });
     } catch (e) {
       form.setError(e.errorInfo.field, { message: e.errorInfo.message });
     }

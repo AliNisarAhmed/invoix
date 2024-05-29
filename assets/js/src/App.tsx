@@ -17,7 +17,7 @@ export const App = () => {
         <Switch>
           <Route path="/login" component={Login} />
           <Route path="/register" component={Register} />
-          <Route path="/">
+          <Route>
             <Auth>
               <div className="w-10/12 mx-auto">
                 <UserNav />
