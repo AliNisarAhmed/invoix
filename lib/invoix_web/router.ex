@@ -63,7 +63,7 @@ defmodule InvoixWeb.Router do
   end
 
   scope "/", InvoixWeb do
-    pipe_through [:browser, :redirect_if_user_is_authenticated]
+    pipe_through [:browser]
 
     get "/users/register", UserRegistrationController, :new
     post "/users/register", UserRegistrationController, :create

@@ -6,7 +6,7 @@ import {
   Transaction,
   UserSessionRequest,
 } from "../types";
-import { mapInvoiceDTO, mapTransactionDTO } from "../utils";
+import { clearCookies, mapInvoiceDTO, mapTransactionDTO } from "../utils";
 
 export async function getTransactions() {
   const resp = await fetch("/api/transactions");
@@ -17,6 +17,12 @@ export async function getTransactions() {
 
 export async function getInvoices() {
   const resp = await fetch("/api/invoices");
+  if (resp.status !== 200) {
+    if (resp.status === 401) {
+      clearCookies();
+    }
+    throw new Error("unauthenticated");
+  }
   const data = await resp.json();
 
   return mapInvoiceDTO(data.invoices) as Invoice[];

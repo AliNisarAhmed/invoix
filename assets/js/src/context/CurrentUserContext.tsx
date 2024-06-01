@@ -34,9 +34,14 @@ function CurrentUserProvider({ children }) {
 
 function getCurrentUser() {
   const cookieObject = getCookieObject();
-  const currentUserCookie = cookieObject["_invoix_web_current_user"];
-  if (currentUserCookie) {
-    return JSON.parse(atob(currentUserCookie));
+  const currentUserCookieEncoded = cookieObject["_invoix_web_current_user"];
+  if (currentUserCookieEncoded) {
+    try {
+      const currentUserCookie = JSON.parse(atob(currentUserCookieEncoded));
+      return currentUserCookie;
+    } catch (error) {
+      return;
+    }
   }
 }
 

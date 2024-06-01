@@ -221,9 +221,10 @@ defmodule InvoixWeb.UserAuth do
       conn
     else
       conn
-      |> maybe_store_return_to()
-      |> redirect(to: ~p"/users/log_in")
-      |> halt()
+      |> put_status(401)
+      |> configure_session(drop: true)
+      |> delete_resp_cookie(@current_user_cookie, @current_user_cookie_options)
+      |> json(%{"error" => "Not logged in"})
     end
   end
 
