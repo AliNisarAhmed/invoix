@@ -48,3 +48,23 @@ export type CreateInvoiceRequest = {
   amount: number;
   date: Date;
 };
+
+export type ServerPagination = {
+  pageSize: number;
+  startCursor: string;
+  endCursor: string;
+  hasNextPage: boolean;
+  hasPreviousPage: boolean;
+};
+
+export type Paginated<T> = {
+  data: T[];
+  pagination: ServerPagination;
+};
+
+export type ClientPagination = {
+  pageIndex: number;
+  direction: "forward" | "backward";
+};
+
+export type PaginationState = ServerPagination & ClientPagination;

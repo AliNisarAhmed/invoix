@@ -1,6 +1,6 @@
-import React from "react";
+import React, { useState } from "react";
 import { ColumnDef } from "@tanstack/react-table";
-import { Invoice } from "../types";
+import { ClientPagination, Invoice } from "../types";
 import { DataTable } from "./DataTable";
 import {
   DropdownMenu,
@@ -16,7 +16,12 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { postTransaction } from "../api";
 
 export function Invoices() {
-  const { data, isError, isPending } = useInvoices();
+  const [clientPagination, setClientPagination] = useState<ClientPagination>({
+    pageIndex: 0,
+    direction: "forward",
+  });
+  const { data, isFetching, isError, isPending } =
+    useInvoices(clientPagination);
 
   const queryClient = useQueryClient();
   const mutation = useMutation({
@@ -161,14 +166,19 @@ export function Invoices() {
     return <div>Error fetching invoices</div>;
   }
 
-  if (isPending) {
+  if (isPending || isFetching) {
     // TODO: change to skeleton
     return null;
   }
 
   return (
     <div>
-      <DataTable columns={columns} data={data} />
+      <DataTable
+        columns={columns}
+        data={data.data}
+        pagination={{ ...clientPagination, ...data.pagination }}
+        setPagination={setClientPagination}
+      />
     </div>
   );
 }

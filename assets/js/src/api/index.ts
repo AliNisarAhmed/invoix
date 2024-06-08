@@ -3,6 +3,7 @@ import {
   CreateInvoiceRequest,
   CurrentUser,
   Invoice,
+  Paginated,
   Transaction,
   UserSessionRequest,
 } from "../types";
@@ -15,17 +16,33 @@ export async function getTransactions() {
   return mapTransactionDTO(data.transactions) as Transaction[];
 }
 
-export async function getInvoices() {
-  const resp = await fetch("/api/invoices");
+export async function getInvoices({
+  startCursor,
+  endCursor,
+  direction,
+}: {
+  startCursor: string;
+  endCursor: string;
+  direction: "forward" | "backward";
+}) {
+  const url = new URLSearchParams();
+  if (direction === "forward") {
+    url.set("first", "10");
+    url.set("after", endCursor);
+  } else {
+    url.set("last", "10");
+    url.set("before", startCursor);
+  }
+  const resp = await fetch(`/api/invoices?${url.toString()}`);
   if (resp.status !== 200) {
     if (resp.status === 401) {
       clearCookies();
     }
     throw new Error("unauthenticated");
   }
-  const data = await resp.json();
+  const { data, pagination } = await resp.json();
 
-  return mapInvoiceDTO(data.invoices) as Invoice[];
+  return { data: mapInvoiceDTO(data), pagination } as Paginated<Invoice>;
 }
 
 export async function loginUser({ email, password }: UserSessionRequest) {

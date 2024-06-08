@@ -14,11 +14,15 @@ import {
 } from "lucide-react";
 
 export function Summary() {
-  const {
-    data: invoicesData,
-    isPending: isInvoicesPending,
-    isError: isInvoicesError,
-  } = useInvoices();
+  // const {
+  //   data: paginatedInvoices,
+  //   isPending: isInvoicesPending,
+  //   isError: isInvoicesError,
+  // } = useInvoices({pageSize: 10, });
+
+  let isInvoicesPending = false;
+  let isInvoicesError = false;
+  const { data: invoicesData } = { data: [] };
 
   const {
     data: transactionsData,

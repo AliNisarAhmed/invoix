@@ -5,8 +5,9 @@ defmodule Invoix.Financials do
   alias Invoix.Financials.Invoice
   alias Invoix.Repo
 
-  def get_invoices(user_id) do
-    Repo.all(from inv in Invoice, where: inv.user_id == ^user_id)
+  def get_invoices(user_id, page_params) do
+    query = from inv in Invoice, where: inv.user_id == ^user_id
+    Flop.validate_and_run(query, page_params, repo: Repo)
   end
 
   def get_transactions() do

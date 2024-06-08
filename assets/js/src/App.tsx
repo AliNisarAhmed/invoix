@@ -8,6 +8,7 @@ import { Login } from "./components/Login";
 import { Register } from "./components/Register";
 import { Auth } from "./components/Auth";
 import { UserNav } from "./components/UserNav";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
 export const App = () => {
   const queryClient = new QueryClient();
@@ -28,6 +29,7 @@ export const App = () => {
           </Route>
         </Switch>
       </CurrentUserProvider>
+      <ReactQueryDevtools initialIsOpen={false} />
     </QueryClientProvider>
   );
 };

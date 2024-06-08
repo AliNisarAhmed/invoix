@@ -2,6 +2,7 @@ defmodule Invoix.Financials.Invoice do
   use Ecto.Schema
   import Ecto.Changeset
 
+  @derive {Flop.Schema, filterable: [:status], sortable: [:date]}
   @derive {Jason.Encoder, except: [:__meta__, :__struct__, :users]}
   schema "invoices" do
     field :status, :string

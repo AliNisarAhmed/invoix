@@ -3,10 +3,31 @@ defmodule InvoixWeb.InvoiceController do
   alias Invoix.Financials
   use InvoixWeb, :controller
 
-  def getInvoices(conn, _) do
+  def getInvoices(conn, params) do
     with %User{id: user_id} <- conn.assigns.current_user do
-      invoices = Financials.get_invoices(user_id)
-      render(conn, :getInvoices, invoices: invoices)
+      first = if is_nil(params["first"]), do: nil, else: String.to_integer(params["first"])
+      after_cursor = params["after"] || nil
+      last = if is_nil(params["last"]), do: nil, else: String.to_integer(params["last"])
+      before_cursor = params["before"]
+
+      with {:ok, {invoices, meta}} <-
+             Financials.get_invoices(user_id, %{
+               first: first,
+               after: after_cursor,
+               last: last,
+               before: before_cursor,
+               order_by: [:date],
+               order_directions: [:desc]
+             }) do
+        render(conn, :getInvoices, invoices: invoices, meta: meta)
+      else
+        e ->
+          dbg(e)
+
+          conn
+          |> put_status(500)
+          |> json(%{"error" => "Something went wrong"})
+      end
     end
   end
 
