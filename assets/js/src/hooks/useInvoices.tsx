@@ -5,12 +5,13 @@ import { ClientPagination } from "../types";
 function useInvoices(pagination: ClientPagination) {
   const query = useQuery({
     staleTime: Infinity,
-    queryKey: ["invoices", pagination.pageIndex],
+    queryKey: ["invoices", pagination.pageIndex, pagination.pageSize],
     queryFn: async () => {
       return await getInvoices({
         startCursor: query?.data?.pagination.startCursor ?? "",
         endCursor: query?.data?.pagination.endCursor ?? "",
         direction: pagination.direction,
+        pageSize: pagination.pageSize,
       });
     },
     refetchOnReconnect: false,

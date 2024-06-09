@@ -20,17 +20,20 @@ export async function getInvoices({
   startCursor,
   endCursor,
   direction,
+  pageSize,
 }: {
   startCursor: string;
   endCursor: string;
   direction: "forward" | "backward";
+  pageSize: number;
 }) {
   const url = new URLSearchParams();
+  const pageSizeString = String(pageSize ?? 10);
   if (direction === "forward") {
-    url.set("first", "10");
+    url.set("first", pageSizeString);
     url.set("after", endCursor);
   } else {
-    url.set("last", "10");
+    url.set("last", pageSizeString);
     url.set("before", startCursor);
   }
   const resp = await fetch(`/api/invoices?${url.toString()}`);

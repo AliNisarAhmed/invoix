@@ -65,6 +65,7 @@ export type Paginated<T> = {
 export type ClientPagination = {
   pageIndex: number;
   direction: "forward" | "backward";
+  pageSize: number;
 };
 
 export type PaginationState = ServerPagination & ClientPagination;

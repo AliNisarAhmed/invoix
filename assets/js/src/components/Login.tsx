@@ -100,9 +100,7 @@ export function Login() {
     { email, password }: z.infer<typeof formSchema>,
     e: any,
   ) {
-    console.log({ e });
     e.preventDefault();
-    console.log({ e });
     try {
       form.clearErrors();
       const data = await mutation.mutateAsync({ email, password });

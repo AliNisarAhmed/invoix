@@ -19,6 +19,7 @@ export function Invoices() {
   const [clientPagination, setClientPagination] = useState<ClientPagination>({
     pageIndex: 0,
     direction: "forward",
+    pageSize: 10,
   });
   const { data, isFetching, isError, isPending } =
     useInvoices(clientPagination);
@@ -176,7 +177,15 @@ export function Invoices() {
       <DataTable
         columns={columns}
         data={data.data}
-        pagination={{ ...clientPagination, ...data.pagination }}
+        pagination={{
+          endCursor: data?.pagination?.endCursor ?? "",
+          startCursor: data?.pagination?.startCursor ?? "",
+          hasNextPage: data?.pagination?.hasNextPage ?? false,
+          hasPreviousPage: data?.pagination?.hasPreviousPage ?? false,
+          pageIndex: clientPagination.pageIndex,
+          pageSize: clientPagination.pageSize,
+          direction: clientPagination.direction,
+        }}
         setPagination={setClientPagination}
       />
     </div>
