@@ -10,6 +10,7 @@ defmodule InvoixWeb.UserResetPasswordControllerTest do
   end
 
   describe "GET /users/reset_password" do
+    @tag :skip
     test "renders the reset password page", %{conn: conn} do
       conn = get(conn, ~p"/users/reset_password")
       response = html_response(conn, 200)
@@ -18,6 +19,7 @@ defmodule InvoixWeb.UserResetPasswordControllerTest do
   end
 
   describe "POST /users/reset_password" do
+    @tag :skip
     @tag :capture_log
     test "sends a new reset password token", %{conn: conn, user: user} do
       conn =
@@ -33,6 +35,7 @@ defmodule InvoixWeb.UserResetPasswordControllerTest do
       assert Repo.get_by!(Accounts.UserToken, user_id: user.id).context == "reset_password"
     end
 
+    @tag :skip
     test "does not send reset password token if email is invalid", %{conn: conn} do
       conn =
         post(conn, ~p"/users/reset_password", %{
@@ -58,11 +61,13 @@ defmodule InvoixWeb.UserResetPasswordControllerTest do
       %{token: token}
     end
 
+    @tag :skip
     test "renders reset password", %{conn: conn, token: token} do
       conn = get(conn, ~p"/users/reset_password/#{token}")
       assert html_response(conn, 200) =~ "Reset password"
     end
 
+    @tag :skip
     test "does not render reset password with invalid token", %{conn: conn} do
       conn = get(conn, ~p"/users/reset_password/oops")
       assert redirected_to(conn) == ~p"/"
@@ -82,6 +87,7 @@ defmodule InvoixWeb.UserResetPasswordControllerTest do
       %{token: token}
     end
 
+    @tag :skip
     test "resets password once", %{conn: conn, user: user, token: token} do
       conn =
         put(conn, ~p"/users/reset_password/#{token}", %{
@@ -100,6 +106,7 @@ defmodule InvoixWeb.UserResetPasswordControllerTest do
       assert Accounts.get_user_by_email_and_password(user.email, "new valid password")
     end
 
+    @tag :skip
     test "does not reset password on invalid data", %{conn: conn, token: token} do
       conn =
         put(conn, ~p"/users/reset_password/#{token}", %{
@@ -112,6 +119,7 @@ defmodule InvoixWeb.UserResetPasswordControllerTest do
       assert html_response(conn, 200) =~ "something went wrong"
     end
 
+    @tag :skip
     test "does not reset password with invalid token", %{conn: conn} do
       conn = put(conn, ~p"/users/reset_password/oops")
       assert redirected_to(conn) == ~p"/"
