@@ -15,25 +15,26 @@ alias Invoix.Repo
 alias Invoix.Accounts.User
 alias Invoix.Financials.Invoice
 
-guest = Repo.one(from u in User, where: u.email == "guest@guest.com")
+guest = Repo.one(from u in User, where: u.email == "guest@invoix.com")
 
 if is_nil(guest) do
   Repo.insert(
     %User{}
     |> User.registration_changeset(%{
-      email: "guest@guest.com",
+      email: "guest@invoix.com",
       password: "guest"
     })
   )
 end
 
-for i <- 1..1000 do
+guest = Repo.one(from u in User, where: u.email == "guest@invoix.com")
+
+for i <- 1..10 do
   Invoix.Repo.insert!(
     %Invoice{}
     |> Invoice.changeset(%{
       status: if(rem(i, 2) == 0, do: "paid", else: "not_paid"),
       date: DateTime.utc_now() |> DateTime.add(-86400 * i, :second) |> DateTime.truncate(:second),
-      ref_no: "INV-#{to_string(i) |> String.pad_leading(5, "0")}",
       amount: Decimal.new(1, i * 100, 2),
       client_name: if(rem(i, 2) == 0, do: "Ali Ahmed", else: "Azlan Ali"),
       user_id: guest.id

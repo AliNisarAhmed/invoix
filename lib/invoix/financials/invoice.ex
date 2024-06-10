@@ -7,7 +7,7 @@ defmodule Invoix.Financials.Invoice do
   schema "invoices" do
     field :status, :string
     field :date, :utc_datetime
-    field :ref_no, :string
+    field :ref_no, :integer
     field :client_name, :string
     field :amount, :decimal
     belongs_to :users, Invoix.Accounts.User, foreign_key: :user_id
@@ -18,8 +18,8 @@ defmodule Invoix.Financials.Invoice do
   @doc false
   def changeset(invoice, attrs) do
     invoice
-    |> cast(attrs, [:ref_no, :client_name, :date, :amount, :status, :user_id])
-    |> validate_required([:ref_no, :client_name, :date, :amount, :status, :user_id])
+    |> cast(attrs, [:client_name, :date, :amount, :status, :user_id])
+    |> validate_required([:client_name, :date, :amount, :status, :user_id])
   end
 
   def update_status_changeset(invoice, new_status) do

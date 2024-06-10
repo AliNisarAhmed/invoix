@@ -3,7 +3,7 @@ defmodule Invoix.Repo.Migrations.CreateTransactions do
 
   def change do
     create table(:transactions) do
-      add :ref_no, references(:invoices, column: :ref_no, type: :string)
+      add :ref_no, references(:invoices, column: :ref_no, type: :integer)
       add :date, :utc_datetime
       add :description, :string
       add :amount, :decimal

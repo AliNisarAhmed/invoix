@@ -28,7 +28,6 @@ defmodule Invoix.Financials do
       amount: Decimal.new(1, amount, 2),
       date: date,
       client_name: clientName,
-      ref_no: get_next_invoice_ref(),
       status: "not_paid",
       user_id: user_id
     })
@@ -54,8 +53,4 @@ defmodule Invoix.Financials do
     end)
   end
 
-  def get_next_invoice_ref() do
-    next_ref = InvoiceRef.next()
-    "INV-#{String.pad_leading(Integer.to_string(next_ref), 5, "0")}"
-  end
 end
