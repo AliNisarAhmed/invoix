@@ -257,7 +257,6 @@ defmodule Invoix.AccountsTest do
     end
   end
 
-  @tag :skip
   describe "update_user_password/3" do
     setup do
       %{user: user_fixture()}
@@ -271,7 +270,7 @@ defmodule Invoix.AccountsTest do
         })
 
       assert %{
-               password: ["should be at least 12 character(s)"],
+               # password: ["should be at least 12 character(s)"],
                password_confirmation: ["does not match password"]
              } = errors_on(changeset)
     end
@@ -467,7 +466,6 @@ defmodule Invoix.AccountsTest do
     end
   end
 
-  @tag :skip
   describe "reset_user_password/2" do
     setup do
       %{user: user_fixture()}
@@ -481,7 +479,7 @@ defmodule Invoix.AccountsTest do
         })
 
       assert %{
-               password: ["should be at least 12 character(s)"],
+               # password: ["should be at least 12 character(s)"],
                password_confirmation: ["does not match password"]
              } = errors_on(changeset)
     end

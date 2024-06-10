@@ -26,7 +26,8 @@ defmodule InvoixWeb.UserSessionControllerTest do
       # Now do a logged in request and assert on the menu
       conn = get(conn, ~p"/api/invoices")
       response = json_response(conn, 200)
-      assert is_list(response["invoices"])
+      assert is_list(response["data"])
+      assert is_map(response["pagination"])
     end
 
     test "emits error message with invalid credentials", %{conn: conn, user: user} do
