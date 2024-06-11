@@ -7,7 +7,7 @@ defmodule Invoix.Financials.Transcation do
   schema "transactions" do
     field :date, :utc_datetime
     field :description, :string
-    field :ref_no, :string
+    field :ref_no, :integer
     has_one :invoice, Invoice, foreign_key: :ref_no, references: :ref_no
     field :amount, :decimal
 

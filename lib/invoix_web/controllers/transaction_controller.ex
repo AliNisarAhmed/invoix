@@ -8,7 +8,7 @@ defmodule InvoixWeb.TransactionController do
   end
 
   def createTransaction(conn, %{"invoice_refno" => invoice_refno}) do
-    with invoice <- Financials.get_invoice_by_refno(invoice_refno),
+    with invoice <- Financials.get_invoice_by_refno(invoice_refno) |> dbg,
          Financials.create_transaction!(invoice) do
       json(conn, %{success: true})
     else

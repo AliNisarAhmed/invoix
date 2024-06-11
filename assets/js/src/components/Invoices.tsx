@@ -27,8 +27,20 @@ export function Invoices() {
   const queryClient = useQueryClient();
   const mutation = useMutation({
     mutationFn: postTransaction,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["invoices"] });
+    onSuccess: async () => {
+      // await queryClient.invalidateQueries({
+      //   queryKey: ["invoices"],
+      //   type: "all",
+      // });
+      await queryClient.refetchQueries({
+        queryKey: [
+          "invoices",
+          clientPagination.pageIndex,
+          clientPagination.pageSize,
+        ],
+        exact: true,
+        type: "active",
+      });
     },
   });
 

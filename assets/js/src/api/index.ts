@@ -103,7 +103,7 @@ export async function postInvoice({
 }
 
 export async function postTransaction(invoice: Invoice) {
-  const res = await fetch(`/ api / invoices / ${invoice.refNo} / transaction`, {
+  const res = await fetch(`/api/invoices/${invoice.refNo}/transaction`, {
     method: "POST",
     credentials: "same-origin",
     headers: {

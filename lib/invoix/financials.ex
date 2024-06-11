@@ -1,6 +1,5 @@
 defmodule Invoix.Financials do
   import Ecto.Query, warn: false
-  alias Invoix.Financials.InvoiceRef
   alias Invoix.Financials.Transcation
   alias Invoix.Financials.Invoice
   alias Invoix.Repo
@@ -14,8 +13,15 @@ defmodule Invoix.Financials do
     Repo.all(Transcation)
   end
 
-  def get_invoice_by_refno(invoice_refno) do
-    Repo.get_by!(Invoice, ref_no: invoice_refno)
+  @spec get_invoice_by_refno(String.t()) :: Invoice
+  def get_invoice_by_refno(invoice_refno_str) do
+    invoice_ref_no = parse_invoice_no(invoice_refno_str)
+    Repo.get_by!(Invoice, ref_no: invoice_ref_no)
+  end
+
+  defp parse_invoice_no(invoice_refno_str) do
+    ["INV", ref_no_str] = String.split(invoice_refno_str, "-")
+    String.to_integer(ref_no_str)
   end
 
   def create_invoice(%{amount: amount, dateString: dateString, clientName: clientName},
@@ -52,5 +58,4 @@ defmodule Invoix.Financials do
       |> Repo.update!()
     end)
   end
-
 end
