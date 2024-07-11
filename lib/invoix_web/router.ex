@@ -32,6 +32,7 @@ defmodule InvoixWeb.Router do
     post "/invoices/:invoice_refno/transaction", TransactionController, :createTransaction
     get "/invoices", InvoiceController, :getInvoices
     post "/invoice", InvoiceController, :createInvoice
+    get "/summary", SummaryController, :getSummary
   end
 
   # Enable LiveDashboard and Swoosh mailbox preview in development

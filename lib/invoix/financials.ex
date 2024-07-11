@@ -58,4 +58,20 @@ defmodule Invoix.Financials do
       |> Repo.update!()
     end)
   end
+
+  def get_invoices_for_month(month) do
+    query =
+      from inv in Invoice,
+        where: fragment("date_part(?, ?)", "month", inv.date) == ^month
+
+    {:ok, Repo.all(query)}
+  end
+
+  @spec calculate_revenue(Enum.t(Invoice), pos_integer) :: pos_integer
+  def calculate_revenue(invoices, month) do
+    invoices
+    |> Enum.map(&(&1.amount))
+    |> Enum.reduce(&Decimal.add/2)
+    |> Decimal.to_integer()
+  end
 end
