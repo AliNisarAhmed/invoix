@@ -3,31 +3,39 @@ defmodule InvoixWeb.SummaryController do
   alias Invoix.Financials
   use InvoixWeb, :controller
 
-  def getSummary(conn, params) do
-    current_month = 7
-    previous_month = 6
-    with {:ok, current_invoices} <- Financials.get_invoices_for_month(current_month),
-         {:ok, previous_invoices} <- Financials.get_invoices_for_month(previous_month) do
-      revenue_this_month = Financials.calculate_revenue(current_invoices, current_month)
-      revene_previous_month = Financials.calculate_revenue(previous_invoices, previous_month)
+  def getSummary(conn, _params) do
+    today = DateTime.utc_now()
+    current_day = today.day
+    current_month = today.month
+    previous_month = if current_month - 1 <= 0, do: 12, else: current_month - 1
+
+    with {:ok, current_invoices} <- Financials.get_invoices_for_month(current_month, current_day),
+         {:ok, previous_invoices} <-
+           Financials.get_invoices_for_month(previous_month, current_day),
+         {:ok, current_transactions} <-
+           Financials.get_transactions_for_month(current_month, current_day),
+         {:ok, previous_transactions} <-
+           Financials.get_invoices_for_month(previous_month, current_day) do
+      current_revenue = Financials.sum_amount(current_invoices)
+      previous_revenue = Financials.sum_amount(previous_invoices)
       current_num_invoices = length(current_invoices)
       previous_num_invoices = length(previous_invoices)
-
-      current_num_clients =
-        Enum.uniq_by(current_invoices, fn inv -> inv.client_name end) |> Enum.count()
-
-      previous_num_clients =
-        Enum.uniq_by(previous_invoices, fn inv -> inv.client_name end) |> Enum.count()
+      current_num_transactions = length(current_transactions)
+      previous_num_transactions = length(previous_transactions)
+      current_income = Financials.sum_amount(current_transactions)
+      previous_income = Financials.sum_amount(previous_transactions)
 
       render(conn, :render_summary,
         period: "month",
         value: current_month,
-        current_revenue: revenue_this_month,
-        previous_revenue: revene_previous_month,
         current_num_invoices: current_num_invoices,
         previous_num_invoices: previous_num_invoices,
-        current_num_clients: current_num_clients,
-        previous_num_clients: previous_num_clients
+        current_revenue: current_revenue,
+        previous_revenue: previous_revenue,
+        current_num_transactions: current_num_transactions,
+        previous_num_transactions: previous_num_transactions,
+        current_income: current_income,
+        previous_income: previous_income
       )
     else
       e ->

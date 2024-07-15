@@ -1,6 +1,6 @@
 defmodule Invoix.Financials do
   import Ecto.Query, warn: false
-  alias Invoix.Financials.Transcation
+  alias Invoix.Financials.Transaction
   alias Invoix.Financials.Invoice
   alias Invoix.Repo
 
@@ -44,8 +44,8 @@ defmodule Invoix.Financials do
     Repo.transaction(fn ->
       {:ok, now} = DateTime.now("Etc/UTC")
 
-      %Invoix.Financials.Transcation{}
-      |> Invoix.Financials.Transcation.changeset(%{
+      %Invoix.Financials.Transaction{}
+      |> Invoix.Financials.Transaction.changeset(%{
         ref_no: ref_no,
         date: now,
         amount: amount,
@@ -59,18 +59,42 @@ defmodule Invoix.Financials do
     end)
   end
 
-  def get_invoices_for_month(month) do
+  def get_invoices_for_month(month, end_day) do
+    {:ok, startDate} = Date.new(2024, month, 1)
+    {:ok, startTime} = Time.new(0, 0, 0, 0)
+    {:ok, startDateTime} = DateTime.new(startDate, startTime, "Etc/UTC")
+    {:ok, endDate} = Date.new(2024, month, end_day)
+    {:ok, endTime} = Time.new(11, 59, 59, 0)
+    {:ok, endDateTime} = DateTime.new(endDate, endTime, "Etc/UTC")
+
     query =
       from inv in Invoice,
-        where: fragment("date_part(?, ?)", "month", inv.date) == ^month
+        where: inv.date >= ^startDateTime,
+        where: inv.date <= ^endDateTime
 
     {:ok, Repo.all(query)}
   end
 
-  @spec calculate_revenue(Enum.t(Invoice), pos_integer) :: pos_integer
-  def calculate_revenue(invoices, month) do
-    invoices
-    |> Enum.map(&(&1.amount))
+  def get_transactions_for_month(month, end_day) do 
+    {:ok, startDate} = Date.new(2024, month, 1)
+    {:ok, startTime} = Time.new(0, 0, 0, 0)
+    {:ok, startDateTime} = DateTime.new(startDate, startTime, "Etc/UTC")
+    {:ok, endDate} = Date.new(2024, month, end_day)
+    {:ok, endTime} = Time.new(11, 59, 59, 0)
+    {:ok, endDateTime} = DateTime.new(endDate, endTime, "Etc/UTC")
+
+    query =
+      from tr in Transaction,
+        where: tr.date >= ^startDateTime,
+        where: tr.date <= ^endDateTime
+
+    {:ok, Repo.all(query)}
+  end
+
+  @spec sum_amount(Enum.t(Invoice | Transaction)) :: pos_integer
+  def sum_amount(items) do
+    items
+    |> Enum.map(& &1.amount)
     |> Enum.reduce(&Decimal.add/2)
     |> Decimal.to_integer()
   end

@@ -69,3 +69,18 @@ export type ClientPagination = {
 };
 
 export type PaginationState = ServerPagination & ClientPagination;
+
+export type SummaryPeriod = "month";
+
+export type SummaryData = {
+  currentIncome: number;
+  previousIncome: number;
+  currentInvoices: number;
+  previousInvoices: number;
+  currentRevenue: number;
+  previousRevenue: number;
+  currentTransactions: number;
+  previousTransactions: number;
+  period: SummaryPeriod;
+  currentPeriodValue: number;
+};

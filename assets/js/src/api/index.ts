@@ -4,6 +4,7 @@ import {
   CurrentUser,
   Invoice,
   Paginated,
+  SummaryData,
   Transaction,
   UserSessionRequest,
 } from "../types";
@@ -123,5 +124,18 @@ export async function logoutUser() {
     },
     referrerPolicy: "no-referrer",
   });
+  return await resp.json();
+}
+
+export async function getSummary(): Promise<SummaryData> {
+  const resp = await fetch("/api/summary", {
+    method: "GET",
+    credentials: "same-origin",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    referrerPolicy: "no-referrer",
+  });
+
   return await resp.json();
 }

@@ -64,3 +64,28 @@ export function clearCookies() {
   });
   localStorage.clear();
 }
+
+export function showPercentageChange({
+  previous,
+  current,
+}: {
+  previous: number;
+  current: number;
+}): string {
+  const change = calcPercentageChange({ previous, current });
+  if (change >= 0) {
+    return `+${change.toFixed(2)}%`;
+  } else {
+    return `${change.toFixed(2)}%`;
+  }
+}
+
+export function calcPercentageChange({
+  previous,
+  current,
+}: {
+  previous: number;
+  current: number;
+}): number {
+  return ((current - previous) / previous) * 100;
+}

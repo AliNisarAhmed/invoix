@@ -1,4 +1,4 @@
-defmodule Invoix.Financials.Transcation do
+defmodule Invoix.Financials.Transaction do
   alias Invoix.Financials.Invoice
   use Ecto.Schema
   import Ecto.Changeset

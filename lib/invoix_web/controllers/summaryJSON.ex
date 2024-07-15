@@ -1,28 +1,18 @@
 defmodule InvoixWeb.SummaryJSON do
   alias Invoix.Financials.Invoice
 
-  def render_summary(
-        %{
-          current_revenue: current_revenue,
-          previous_revenue: previous_revenue,
-          current_num_invoices: current_num_invoices,
-          previous_num_invoices: previous_num_invoices,
-          current_num_clients: current_num_clients,
-          previous_num_clients: previous_num_clients,
-          value: value,
-          period: period
-
-        } = summary
-      ) do
+  def render_summary(summary) do
     %{
-      current_revenue: current_revenue,
-      previous_revenue: previous_revenue,
-      current_num_invoices: current_num_invoices,
-      previous_num_invoices: previous_num_invoices,
-      current_num_clients: current_num_clients,
-      previous_num_clients: previous_num_clients,
-      period: period,
-      value: value
+      currentRevenue: summary.current_revenue,
+      previousRevenue: summary.previous_revenue,
+      currentInvoices: summary.current_num_invoices,
+      previousInvoices: summary.previous_num_invoices,
+      currentTransactions: summary.current_num_transactions,
+      previousTransactions: summary.previous_num_transactions,
+      currentIncome: summary.current_income,
+      previousIncome: summary.previous_income,
+      period: summary.period,
+      value: summary.value
     }
   end
 
