@@ -4,6 +4,8 @@ defmodule Invoix.Financials do
   alias Invoix.Financials.Invoice
   alias Invoix.Repo
 
+  use Invoix.Types
+
   def get_invoices(user_id, page_params) do
     query = from inv in Invoice, where: inv.user_id == ^user_id
     Flop.validate_and_run(query, page_params, repo: Repo)
@@ -75,7 +77,7 @@ defmodule Invoix.Financials do
     {:ok, Repo.all(query)}
   end
 
-  def get_transactions_for_month(month, end_day) do 
+  def get_transactions_for_month(month, end_day) do
     {:ok, startDate} = Date.new(2024, month, 1)
     {:ok, startTime} = Time.new(0, 0, 0, 0)
     {:ok, startDateTime} = DateTime.new(startDate, startTime, "Etc/UTC")
@@ -91,11 +93,52 @@ defmodule Invoix.Financials do
     {:ok, Repo.all(query)}
   end
 
-  @spec sum_amount(Enum.t(Invoice | Transaction)) :: pos_integer
+  @spec sum_amount(list(Invoice | Transaction)) :: pos_integer
   def sum_amount(items) do
     items
     |> Enum.map(& &1.amount)
     |> Enum.reduce(&Decimal.add/2)
     |> Decimal.to_integer()
+  end
+
+  @spec calc_summary(period :: summary_period()) :: {:ok, summary()} | {:error, any()}
+  def calc_summary(period \\ "month") do
+    today = DateTime.utc_now()
+    current_day = today.day
+    current_month = today.month
+    previous_month = if current_month - 1 <= 0, do: 12, else: current_month - 1
+
+    with {:ok, current_invoices} <- get_invoices_for_month(current_month, current_day),
+         {:ok, previous_invoices} <-
+           get_invoices_for_month(previous_month, current_day),
+         {:ok, current_transactions} <-
+           get_transactions_for_month(current_month, current_day),
+         {:ok, previous_transactions} <-
+           get_invoices_for_month(previous_month, current_day) do
+      current_revenue = sum_amount(current_invoices)
+      previous_revenue = sum_amount(previous_invoices)
+      current_num_invoices = length(current_invoices)
+      previous_num_invoices = length(previous_invoices)
+      current_num_transactions = length(current_transactions)
+      previous_num_transactions = length(previous_transactions)
+      current_income = sum_amount(current_transactions)
+      previous_income = sum_amount(previous_transactions)
+
+      {:ok,
+       %{
+         period: period,
+         value: current_month,
+         current_num_invoices: current_num_invoices,
+         previous_num_invoices: previous_num_invoices,
+         current_revenue: current_revenue,
+         previous_revenue: previous_revenue,
+         current_num_transactions: current_num_transactions,
+         previous_num_transactions: previous_num_transactions,
+         current_income: current_income,
+         previous_income: previous_income
+       }}
+    else
+      e -> {:error, e}
+    end
   end
 end
