@@ -1,7 +1,6 @@
 defmodule InvoixWeb.UserAuthTest do
   use InvoixWeb.ConnCase, async: true
 
-  alias Phoenix.LiveView
   alias Invoix.Accounts
   alias InvoixWeb.UserAuth
   import Invoix.AccountsFixtures

@@ -16,3 +16,12 @@ Ready to run in production? Please [check our deployment guides](https://hexdocs
   * Docs: https://hexdocs.pm/phoenix
   * Forum: https://elixirforum.com/c/phoenix-forum
   * Source: https://github.com/phoenixframework/phoenix
+
+
+
+## Resources
+https://dev.to/rbt/react-table-useglobalfilter-with-two-columns-4ag0
+
+https://ignaciochiazzo.medium.com/paginating-requests-in-apis-d4883d4c1c4c
+
+Fix test database: https://elixirforum.com/t/uuid-working-but-tests-are-failing/720/3

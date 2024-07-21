@@ -1,5 +1,7 @@
 defmodule InvoixWeb.TransactionController do
   alias Invoix.Financials
+  alias Invoix.Accounts.User
+
   use InvoixWeb, :controller
 
   def transactions(conn, _) do
@@ -8,8 +10,9 @@ defmodule InvoixWeb.TransactionController do
   end
 
   def createTransaction(conn, %{"invoice_refno" => invoice_refno}) do
-    with invoice <- Financials.get_invoice_by_refno(invoice_refno) |> dbg,
-         Financials.create_transaction!(invoice) do
+    with %User{id: user_id} <- conn.assigns.current_user,
+         invoice <- Financials.get_invoice_by_refno(invoice_refno),
+         Financials.create_transaction!(invoice, user_id) do
       json(conn, %{success: true})
     else
       e ->

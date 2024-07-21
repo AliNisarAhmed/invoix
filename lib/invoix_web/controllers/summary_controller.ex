@@ -4,7 +4,8 @@ defmodule InvoixWeb.SummaryController do
   use InvoixWeb, :controller
 
   def getSummary(conn, _params) do
-    with {:ok, summary} <- Financials.calc_summary() do
+    with %User{id: user_id} <- conn.assigns.current_user,
+         {:ok, summary} <- Financials.calc_summary(user_id) do
       render(conn, :render_summary, summary)
     else
       {:error, e} ->
