@@ -123,7 +123,9 @@ defmodule Invoix.FinancialsFixtures do
         password: "Password1!"
       })
 
-    invoices = generate_invoices("07", first_user.id, 10, second_user.id, 20)
+    invoices =
+      generate_invoices("07", first_user.id, 10, second_user.id, 20)
+      |> Enum.concat(generate_invoices("08", first_user.id, 10, second_user.id, 20))
 
     invoices
     |> Enum.each(fn inv ->

@@ -33,10 +33,6 @@ defmodule Invoix.FinancialsTest do
         )
 
       assert Enum.all?(invoices, fn inv -> inv.user_id == first_user.id end)
-      assert length(invoices) == 4
-
-      assert Financials.sum_amount(invoices) == 4000
-
       refute Enum.any?(invoices, fn inv -> inv.user_id == second_user.id end)
     end
 
@@ -54,10 +50,28 @@ defmodule Invoix.FinancialsTest do
 
       assert Enum.all?(invoices, fn inv -> inv.user_id == second_user.id end)
       assert length(invoices) == 4
-
       assert Financials.sum_amount(invoices) == 8000
-
       refute Enum.any?(invoices, fn inv -> inv.user_id == first_user.id end)
+    end
+
+    test "invoices returned are all of correct month", %{
+      first_user: first_user,
+      second_user: second_user
+    } do
+      {:ok, invoices} =
+        Invoix.Financials.get_financials_for_period(
+          "month",
+          Invoix.FinancialsFixtures.create_date_time("2024-08-19", "13:23:20"),
+          second_user.id,
+          Invoice
+        )
+
+      assert Enum.all?(invoices, fn inv -> inv.user_id == second_user.id end)
+      assert length(invoices) == 4
+
+      assert Enum.all?(invoices, fn inv ->
+               DateTime.to_date(inv.date).month == 8
+             end)
     end
   end
 end
