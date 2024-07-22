@@ -114,10 +114,11 @@ export function DataTable<TData, TValue>({
   const queryClient = useQueryClient();
   const mutation = useMutation({
     mutationFn: postInvoice,
-    onSuccess: () => {
+    onSuccess: async () => {
       setSheetOpen(false);
       form.reset();
-      queryClient.invalidateQueries({ queryKey: ["invoices"] });
+      queryClient.invalidateQueries({ queryKey: ["invoices"], exact: false });
+      queryClient.invalidateQueries({ queryKey: ["summary"] });
       mutation.reset();
     },
   });

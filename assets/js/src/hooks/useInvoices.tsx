@@ -15,7 +15,7 @@ function useInvoices(pagination: ClientPagination) {
       });
     },
     refetchOnReconnect: false,
-    refetchOnMount: false,
+    refetchOnMount: true,
     refetchOnWindowFocus: false,
     placeholderData: keepPreviousData,
   });
