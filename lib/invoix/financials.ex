@@ -42,14 +42,16 @@ defmodule Invoix.Financials do
     |> Repo.insert()
   end
 
-  def create_transaction!(%Invoice{ref_no: ref_no, amount: amount} = invoice, user_id) do
+  def create_transaction!(
+        %Invoice{ref_no: ref_no, amount: amount} = invoice,
+        user_id,
+        date \\ DateTime.utc_now()
+      ) do
     Repo.transaction(fn ->
-      {:ok, now} = DateTime.now("Etc/UTC")
-
       %Invoix.Financials.Transaction{}
       |> Invoix.Financials.Transaction.changeset(%{
         ref_no: ref_no,
-        date: now,
+        date: date,
         amount: amount,
         description: "Transaction for Invoice #{ref_no}",
         user_id: user_id
@@ -62,23 +64,6 @@ defmodule Invoix.Financials do
     end)
   end
 
-  def get_transactions_for_month(user_id, month, end_day) do
-    {:ok, startDate} = Date.new(2024, month, 1)
-    {:ok, startTime} = Time.new(0, 0, 0, 0)
-    {:ok, startDateTime} = DateTime.new(startDate, startTime, "Etc/UTC")
-    {:ok, endDate} = Date.new(2024, month, end_day)
-    {:ok, endTime} = Time.new(11, 59, 59, 0)
-    {:ok, endDateTime} = DateTime.new(endDate, endTime, "Etc/UTC")
-
-    query =
-      from tr in Transaction,
-        where: tr.date >= ^startDateTime,
-        where: tr.date <= ^endDateTime,
-        where: tr.user_id == ^user_id
-
-    {:ok, Repo.all(query)}
-  end
-
   @spec sum_amount(list(Invoice | Transaction)) :: pos_integer
   def sum_amount(items) do
     items
@@ -87,22 +72,20 @@ defmodule Invoix.Financials do
     |> Decimal.to_integer()
   end
 
-  def get_financials_for_period("month", date, user_id, schema) do
-    current_year = date.year 
+  def get_financials_for_period(:month, date, user_id, schema) do
+    current_year = date.year
     current_month = date.month
-    end_day = date |> DateTime.to_date() |> Date.days_in_month()
 
-    {:ok, startDate} = Date.new(current_year, current_month, 1)
-    {:ok, startTime} = Time.new(0, 0, 0, 0)
-    {:ok, startDateTime} = DateTime.new(startDate, startTime, "Etc/UTC")
-    {:ok, endDate} = Date.new(current_year, current_month, end_day)
-    {:ok, endTime} = Time.new(11, 59, 59, 0)
-    {:ok, endDateTime} = DateTime.new(endDate, endTime, "Etc/UTC")
+    {:ok, start_date} = Date.new(current_year, current_month, 1)
+    {:ok, start_time} = Time.new(0, 0, 0, 0)
+    {:ok, end_time} = Time.new(11, 59, 59, 0)
+    {:ok, start_date_time} = DateTime.new(start_date, start_time, "Etc/UTC")
+    {:ok, end_date_time} = DateTime.new(DateTime.to_date(date), end_time, "Etc/UTC")
 
     query =
       from item in schema,
-        where: item.date >= ^startDateTime,
-        where: item.date <= ^endDateTime,
+        where: item.date >= ^start_date_time,
+        where: item.date <= ^end_date_time,
         where: item.user_id == ^user_id
 
     {:ok, Repo.all(query)}
@@ -110,19 +93,19 @@ defmodule Invoix.Financials do
 
   @spec calc_summary(user_id :: non_neg_integer, period :: summary_period()) ::
           {:ok, summary()} | {:error, any()}
-  def calc_summary(user_id, period \\ "month") do
+  def calc_summary(user_id, period \\ :month) do
     today = DateTime.utc_now()
     previous_date = Invoix.Utils.date_in_previous_month(today)
     current_month = today.month
 
     with {:ok, current_invoices} <-
-           get_financials_for_period("month", today, user_id, Invoice),
+           get_financials_for_period(:month, today, user_id, Invoice),
          {:ok, previous_invoices} <-
-           get_financials_for_period("month", previous_date, user_id, Invoice),
+           get_financials_for_period(:month, previous_date, user_id, Invoice),
          {:ok, current_transactions} <-
-           get_financials_for_period("month", today, user_id, Transaction),
+           get_financials_for_period(:month, today, user_id, Transaction),
          {:ok, previous_transactions} <-
-           get_financials_for_period("month", previous_date, user_id, Transaction) do
+           get_financials_for_period(:month, previous_date, user_id, Transaction) do
       current_revenue = sum_amount(current_invoices)
       previous_revenue = sum_amount(previous_invoices)
       current_num_invoices = length(current_invoices)

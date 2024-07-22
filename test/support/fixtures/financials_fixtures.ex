@@ -1,6 +1,6 @@
 defmodule Invoix.FinancialsFixtures do
   alias Invoix.Financials.Invoice
-  alias Invoix.Accounts.User
+  alias Invoix.Financials
 
   import Ecto.Query, warn: false
   alias Invoix.Repo
@@ -20,7 +20,11 @@ defmodule Invoix.FinancialsFixtures do
     end)
   end
 
-  def generate_invoices(month_string, user_id_1, amount_1, user_id_2, amount_2) do
+  def generate_invoices(month, user_id_1, amount_1, user_id_2, amount_2) do
+    month_string = Integer.to_string(month) |> String.pad_leading(2, "0")
+    year = 2024
+    end_of_month = Date.new!(year, month, 1) |> Date.end_of_month() |> Date.to_iso8601()
+
     [
       %{
         id: Ecto.UUID.generate(),
@@ -41,14 +45,14 @@ defmodule Invoix.FinancialsFixtures do
         amount: Decimal.new(1, amount_1, 2),
         date: create_date_time("2024-#{month_string}-01", "00:00:00"),
         client_name: "test_client",
-        status: "paid",
+        status: "not_paid",
         user_id: user_id_1
       },
       %{
         amount: Decimal.new(1, amount_2, 2),
         date: create_date_time("2024-#{month_string}-01", "00:00:00"),
         client_name: "test_client",
-        status: "paid",
+        status: "not_paid",
         user_id: user_id_2
       },
       %{
@@ -69,42 +73,42 @@ defmodule Invoix.FinancialsFixtures do
         amount: Decimal.new(1, amount_1, 2),
         date: create_date_time("2024-#{month_string}-15", "00:00:00"),
         client_name: "test_client",
-        status: "paid",
+        status: "not_paid",
         user_id: user_id_1
       },
       %{
         amount: Decimal.new(1, amount_2, 2),
         date: create_date_time("2024-#{month_string}-15", "00:00:00"),
         client_name: "test_client",
-        status: "paid",
+        status: "not_paid",
         user_id: user_id_2
       },
       %{
         amount: Decimal.new(1, amount_1, 2),
-        date: create_date_time("2024-#{month_string}-31", "23:59:59"),
+        date: create_date_time(end_of_month, "23:59:59"),
         client_name: "test_client",
         status: "not_paid",
         user_id: user_id_1
       },
       %{
         amount: Decimal.new(1, amount_2, 2),
-        date: create_date_time("2024-#{month_string}-31", "23:59:59"),
+        date: create_date_time(end_of_month, "23:59:59"),
         client_name: "test_client",
         status: "not_paid",
         user_id: user_id_2
       },
       %{
         amount: Decimal.new(1, amount_1, 2),
-        date: create_date_time("2024-#{month_string}-31", "23:59:59"),
+        date: create_date_time(end_of_month, "23:59:59"),
         client_name: "test_client",
-        status: "paid",
+        status: "not_paid",
         user_id: user_id_1
       },
       %{
         amount: Decimal.new(1, amount_2, 2),
-        date: create_date_time("2024-#{month_string}-31", "23:59:59"),
+        date: create_date_time(end_of_month, "23:59:59"),
         client_name: "test_client",
-        status: "paid",
+        status: "not_paid",
         user_id: user_id_2
       }
     ]
@@ -124,14 +128,22 @@ defmodule Invoix.FinancialsFixtures do
       })
 
     invoices =
-      generate_invoices("07", first_user.id, 10, second_user.id, 20)
-      |> Enum.concat(generate_invoices("08", first_user.id, 10, second_user.id, 20))
+      generate_invoices(7, first_user.id, 10, second_user.id, 20)
+      |> Enum.concat(generate_invoices(6, first_user.id, 10, second_user.id, 20))
 
-    invoices
+    invoices_db =
+      invoices
+      |> Enum.map(fn inv ->
+        %Invoice{}
+        |> Invoice.changeset(inv)
+        |> Repo.insert!()
+      end)
+
+    invoices_db
     |> Enum.each(fn inv ->
-      %Invoice{}
-      |> Invoice.changeset(inv)
-      |> Repo.insert!()
+      if inv.date.day == 15 do
+        Financials.create_transaction!(inv, inv.user_id, inv.date)
+      end
     end)
 
     %{invoices: invoices, first_user: first_user, second_user: second_user}
