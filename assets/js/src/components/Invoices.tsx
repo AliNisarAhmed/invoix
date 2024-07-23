@@ -20,9 +20,19 @@ export function Invoices() {
     pageIndex: 0,
     direction: "forward",
     pageSize: 10,
+    pageMeta: {
+      0: {
+        startCursor: null,
+        endCursor: null,
+        hasNextPage: true,
+        hasPreviousPage: false,
+      },
+    },
   });
-  const { data, isFetching, isError, isPending } =
-    useInvoices(clientPagination);
+  const { data, isFetching, isError, isPending } = useInvoices(
+    clientPagination,
+    setClientPagination,
+  );
 
   const queryClient = useQueryClient();
   const mutation = useMutation({
@@ -189,15 +199,7 @@ export function Invoices() {
       <DataTable
         columns={columns}
         data={data.data}
-        pagination={{
-          endCursor: data?.pagination?.endCursor ?? "",
-          startCursor: data?.pagination?.startCursor ?? "",
-          hasNextPage: data?.pagination?.hasNextPage ?? false,
-          hasPreviousPage: data?.pagination?.hasPreviousPage ?? false,
-          pageIndex: clientPagination.pageIndex,
-          pageSize: clientPagination.pageSize,
-          direction: clientPagination.direction,
-        }}
+        pagination={clientPagination}
         setPagination={setClientPagination}
       />
     </div>

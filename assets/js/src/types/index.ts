@@ -62,10 +62,20 @@ export type Paginated<T> = {
   pagination: ServerPagination;
 };
 
+export type PageMeta = {
+  startCursor: string | null,
+  endCursor: string | null,
+  hasNextPage: boolean,
+  hasPreviousPage: boolean
+}
+
+export type PageIndex = number;
+
 export type ClientPagination = {
-  pageIndex: number;
+  pageIndex: PageIndex;
   direction: "forward" | "backward";
   pageSize: number;
+  pageMeta: Record<PageIndex, PageMeta>, 
 };
 
 export type PaginationState = ServerPagination & ClientPagination;

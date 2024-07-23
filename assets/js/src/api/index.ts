@@ -23,8 +23,8 @@ export async function getInvoices({
   direction,
   pageSize,
 }: {
-  startCursor: string;
-  endCursor: string;
+  startCursor: string | null;
+  endCursor: string | null;
   direction: "forward" | "backward";
   pageSize: number;
 }) {
@@ -32,10 +32,10 @@ export async function getInvoices({
   const pageSizeString = String(pageSize ?? 10);
   if (direction === "forward") {
     url.set("first", pageSizeString);
-    url.set("after", endCursor);
+    startCursor && url.set("after", startCursor);
   } else {
     url.set("last", pageSizeString);
-    url.set("before", startCursor);
+    startCursor && url.set("before", startCursor);
   }
   const resp = await fetch(`/api/invoices?${url.toString()}`);
   if (resp.status !== 200) {

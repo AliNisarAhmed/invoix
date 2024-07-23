@@ -66,7 +66,7 @@ import { ClientPagination, PaginationState } from "../types";
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
-  pagination: PaginationState;
+  pagination: ClientPagination;
   setPagination: React.Dispatch<React.SetStateAction<ClientPagination>>;
 }
 
@@ -117,7 +117,22 @@ export function DataTable<TData, TValue>({
     onSuccess: async () => {
       setSheetOpen(false);
       form.reset();
-      queryClient.invalidateQueries({ queryKey: ["invoices"], exact: false });
+      setPagination((prev) => ({
+        pageSize: prev.pageSize,
+        direction: "forward",
+        pageIndex: 0,
+        pageMeta: {
+          0: {
+            startCursor: null,
+            endCursor: null,
+            hasNextPage: true,
+            hasPreviousPage: false,
+          },
+        },
+      }));
+      queryClient.invalidateQueries({
+        queryKey: ["invoices"],
+      });
       queryClient.invalidateQueries({ queryKey: ["summary"] });
       mutation.reset();
     },
@@ -253,9 +268,9 @@ export function DataTable<TData, TValue>({
                       {header.isPlaceholder
                         ? null
                         : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext(),
-                        )}
+                            header.column.columnDef.header,
+                            header.getContext(),
+                          )}
                     </TableHead>
                   );
                 })}
@@ -331,7 +346,9 @@ export function DataTable<TData, TValue>({
                 direction: "backward",
               }));
             }}
-            disabled={!pagination.hasPreviousPage}
+            disabled={
+              !pagination.pageMeta[pagination.pageIndex].hasPreviousPage
+            }
           >
             <span className="sr-only">Go to previous page</span>
             <ChevronLeftIcon className="h-4 w-4" />
@@ -340,7 +357,7 @@ export function DataTable<TData, TValue>({
             variant="outline"
             className="h-8 w-8 p-0"
             onClick={() => {
-              if (pagination.hasNextPage) {
+              if (pagination.pageMeta[pagination.pageIndex].hasNextPage) {
                 setPagination((prev: ClientPagination) => ({
                   ...prev,
                   pageIndex: prev.pageIndex + 1,
@@ -348,7 +365,7 @@ export function DataTable<TData, TValue>({
                 }));
               }
             }}
-            disabled={!pagination.hasNextPage}
+            disabled={!pagination.pageMeta[pagination.pageIndex].hasNextPage}
           >
             <span className="sr-only">Go to next page</span>
             <ChevronRightIcon className="h-4 w-4" />
@@ -359,8 +376,6 @@ export function DataTable<TData, TValue>({
   );
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log({ values });
-    console.log(form.formState.errors);
     await mutation.mutateAsync(values);
   }
 }
