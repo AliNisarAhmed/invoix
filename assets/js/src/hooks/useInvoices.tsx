@@ -1,6 +1,7 @@
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { getInvoices } from "../api";
 import { ClientPagination } from "../types";
+import * as Pagination from "../utils/pagination";
 
 function useInvoices(
   pagination: ClientPagination,
@@ -16,18 +17,7 @@ function useInvoices(
         direction: pagination.direction,
         pageSize: pagination.pageSize,
       });
-      setPagination((prev) => ({
-        ...prev,
-        pageMeta: {
-          ...prev.pageMeta,
-          [prev.pageIndex + 1]: {
-            startCursor: paginatedInvoices.pagination.endCursor,
-            endCursor: null,
-            hasNextPage: paginatedInvoices.pagination.hasNextPage,
-            hasPreviousPage: paginatedInvoices.pagination.hasPreviousPage,
-          },
-        },
-      }));
+      setPagination(Pagination.setupNextPage(paginatedInvoices.pagination));
 
       return paginatedInvoices;
     },
