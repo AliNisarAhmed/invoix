@@ -61,7 +61,8 @@ import {
 } from "@radix-ui/react-icons";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { postInvoice } from "../api";
-import { ClientPagination, PaginationState } from "../types";
+import { ClientPagination } from "../types";
+import * as Pagination from "../utils/pagination";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -268,9 +269,9 @@ export function DataTable<TData, TValue>({
                       {header.isPlaceholder
                         ? null
                         : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext(),
-                          )}
+                          header.column.columnDef.header,
+                          header.getContext(),
+                        )}
                     </TableHead>
                   );
                 })}
@@ -340,15 +341,11 @@ export function DataTable<TData, TValue>({
             variant="outline"
             className="h-8 w-8 p-0"
             onClick={() => {
-              setPagination((prev: ClientPagination) => ({
-                ...prev,
-                pageIndex: Math.max(0, prev.pageIndex - 1),
-                direction: "backward",
-              }));
+              if (Pagination.hasPreviousPage(pagination)) {
+                setPagination(Pagination.getPreviousPage);
+              }
             }}
-            disabled={
-              !pagination.pageMeta[pagination.pageIndex].hasPreviousPage
-            }
+            disabled={!Pagination.hasPreviousPage(pagination)}
           >
             <span className="sr-only">Go to previous page</span>
             <ChevronLeftIcon className="h-4 w-4" />
@@ -357,15 +354,11 @@ export function DataTable<TData, TValue>({
             variant="outline"
             className="h-8 w-8 p-0"
             onClick={() => {
-              if (pagination.pageMeta[pagination.pageIndex].hasNextPage) {
-                setPagination((prev: ClientPagination) => ({
-                  ...prev,
-                  pageIndex: prev.pageIndex + 1,
-                  direction: "forward",
-                }));
+              if (Pagination.hasNextPage(pagination)) {
+                setPagination(Pagination.getNextPage);
               }
             }}
-            disabled={!pagination.pageMeta[pagination.pageIndex].hasNextPage}
+            disabled={!Pagination.hasNextPage(pagination)}
           >
             <span className="sr-only">Go to next page</span>
             <ChevronRightIcon className="h-4 w-4" />
