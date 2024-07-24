@@ -36,12 +36,16 @@ export function mapTransactionDTO(
 }
 
 export function mapInvoiceDTO(invoices: InvoiceDTO[]): Invoice[] {
-  return invoices.map((inv) => ({
-    ...inv,
-    date: dayjs(inv.date, "YYYY-MM-DD"),
-    clientName: inv.client_name,
-    refNo: inv.ref_no,
-  }));
+  return invoices.map(mapInvoice);
+}
+
+export function mapInvoice(invoice: InvoiceDTO): Invoice {
+  return {
+    ...invoice,
+    date: dayjs(invoice.date, "YYYY-MM-DD"),
+    clientName: invoice.client_name,
+    refNo: invoice.ref_no,
+  };
 }
 
 export function cn(...inputs: ClassValue[]) {

@@ -39,8 +39,8 @@ defmodule InvoixWeb.InvoiceController do
     }
 
     with %User{id: id} <- conn.assigns.current_user,
-         {:ok, _new_invoice} <- Financials.create_invoice(input, user_id: id) do
-      json(conn, %{success: true})
+         {:ok, new_invoice} <- Financials.create_invoice(input, user_id: id) do
+      render(conn, :createInvoice, invoice: new_invoice)
     else
       e ->
         dbg(e)

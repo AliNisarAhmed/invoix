@@ -37,11 +37,11 @@ export function Register() {
   });
 
   const queryClient = useQueryClient();
-  const mutation = useMutation({
+  const registerUserMutation = useMutation({
     mutationFn: registerUser,
   });
 
-  if (mutation.isSuccess || currentUser) {
+  if (registerUserMutation.isSuccess || currentUser) {
     return <Redirect to="/" replace />;
   }
 
@@ -122,7 +122,7 @@ export function Register() {
   ) {
     e.preventDefault();
     try {
-      const data = await mutation.mutateAsync({ email, password });
+      const data = await registerUserMutation.mutateAsync({ email, password });
       setCurrentUser(data);
       setLocation("/invoices", { replace: true });
     } catch (e) {

@@ -8,7 +8,12 @@ import {
   Transaction,
   UserSessionRequest,
 } from "../types";
-import { clearCookies, mapInvoiceDTO, mapTransactionDTO } from "../utils";
+import {
+  clearCookies,
+  mapInvoice,
+  mapInvoiceDTO,
+  mapTransactionDTO,
+} from "../utils";
 
 export async function getTransactions() {
   const resp = await fetch("/api/transactions");
@@ -87,7 +92,7 @@ export async function postInvoice({
   clientName,
   date,
   amount,
-}: CreateInvoiceRequest) {
+}: CreateInvoiceRequest): Promise<Invoice> {
   const res = await fetch("/api/invoice", {
     method: "POST",
     credentials: "same-origin",
@@ -97,7 +102,7 @@ export async function postInvoice({
     body: JSON.stringify({ clientName, date, amount }),
   });
 
-  return (await res.json()) as { success: boolean };
+  return mapInvoice(await res.json());
 }
 
 export async function postTransaction(invoice: Invoice) {

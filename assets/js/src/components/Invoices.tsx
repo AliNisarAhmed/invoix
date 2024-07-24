@@ -14,6 +14,7 @@ import { DropdownMenuItem, DropdownMenuSeparator } from "./Dropdown";
 import { useInvoices } from "../hooks/useInvoices";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { postTransaction } from "../api";
+import { useToast } from "../hooks/use-toast";
 
 export function Invoices() {
   const [clientPagination, setClientPagination] = useState<ClientPagination>({
@@ -34,14 +35,12 @@ export function Invoices() {
     setClientPagination,
   );
 
+  const { toast } = useToast();
+
   const queryClient = useQueryClient();
-  const mutation = useMutation({
+  const postTransactionMutation = useMutation({
     mutationFn: postTransaction,
     onSuccess: async () => {
-      // await queryClient.invalidateQueries({
-      //   queryKey: ["invoices"],
-      //   type: "all",
-      // });
       await queryClient.refetchQueries({
         queryKey: [
           "invoices",
@@ -171,7 +170,13 @@ export function Invoices() {
                   <DropdownMenuItem>View Transaction</DropdownMenuItem>
                 ) : (
                   <DropdownMenuItem
-                    onClick={async () => await mutation.mutateAsync(invoice)}
+                    onClick={async () => {
+                      await postTransactionMutation.mutateAsync(invoice);
+                      toast({
+                        title: `Success! ${invoice.refNo} marked as paid`,
+                        description: `${Number(invoice.amount) / 100} added to income`,
+                      });
+                    }}
                   >
                     Mark as paid
                   </DropdownMenuItem>

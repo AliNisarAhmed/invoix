@@ -61,8 +61,9 @@ import {
 } from "@radix-ui/react-icons";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { postInvoice } from "../api";
-import { ClientPagination } from "../types";
+import { ClientPagination, Invoice } from "../types";
 import * as Pagination from "../utils/pagination";
+import { useToast } from "../hooks/use-toast";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -80,6 +81,8 @@ export function DataTable<TData, TValue>({
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [sheetOpen, setSheetOpen] = useState<boolean>(false);
+
+  const { toast } = useToast();
 
   const table = useReactTable({
     data,
@@ -113,29 +116,22 @@ export function DataTable<TData, TValue>({
   });
 
   const queryClient = useQueryClient();
-  const mutation = useMutation({
+  const postInvoiceMutation = useMutation({
     mutationFn: postInvoice,
-    onSuccess: async () => {
+    onSuccess: async (data: Invoice) => {
+      console.log({ invoiceData: data });
+      toast({
+        title: `Success: Invoice created.`,
+        description: `${data.refNo} - client: ${data.clientName} - amount: ${Number(data.amount) / 100}`,
+      });
       setSheetOpen(false);
       form.reset();
-      setPagination((prev) => ({
-        pageSize: prev.pageSize,
-        direction: "forward",
-        pageIndex: 0,
-        pageMeta: {
-          0: {
-            startCursor: null,
-            endCursor: null,
-            hasNextPage: true,
-            hasPreviousPage: false,
-          },
-        },
-      }));
+      setPagination(Pagination.resetPagination);
       queryClient.invalidateQueries({
         queryKey: ["invoices"],
       });
       queryClient.invalidateQueries({ queryKey: ["summary"] });
-      mutation.reset();
+      postInvoiceMutation.reset();
     },
   });
 
@@ -246,9 +242,9 @@ export function DataTable<TData, TValue>({
               </form>
             </Form>
             <SheetFooter>
-              {mutation.status === "idle" ? (
+              {postInvoiceMutation.status === "idle" ? (
                 <Button onClick={form.handleSubmit(onSubmit)}>Save</Button>
-              ) : mutation.status === "pending" ? (
+              ) : postInvoiceMutation.status === "pending" ? (
                 <Button disabled>
                   <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
                   Saving...
@@ -269,9 +265,9 @@ export function DataTable<TData, TValue>({
                       {header.isPlaceholder
                         ? null
                         : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext(),
-                        )}
+                            header.column.columnDef.header,
+                            header.getContext(),
+                          )}
                     </TableHead>
                   );
                 })}
@@ -369,6 +365,6 @@ export function DataTable<TData, TValue>({
   );
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    await mutation.mutateAsync(values);
+    await postInvoiceMutation.mutateAsync(values);
   }
 }

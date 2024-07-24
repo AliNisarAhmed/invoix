@@ -14,6 +14,10 @@ defmodule InvoixWeb.InvoiceJSON do
     }
   end
 
+  def createInvoice(%{invoice: invoice}) do
+    render_invoice(invoice)
+  end
+
   def getInvoicesForMonth(%{invoices: invoices}) do
     render_invoices(invoices)
   end
