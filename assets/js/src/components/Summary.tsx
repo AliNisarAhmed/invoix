@@ -3,6 +3,9 @@ import { formatCurrency, showPercentageChange } from "../utils";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/Card";
 import { CreditCard, DollarSign, Receipt, ReceiptText } from "lucide-react";
 import { useSummary } from "../hooks/useSummary";
+import { Skeleton } from "./ui/Skeleton";
+import { FakeCurrencyCard } from "./FakeCurrencyCard";
+import { FakeNumberCard } from "./FakeNumberCard";
 
 export function Summary() {
   const { data: summaryData, isPending, isError } = useSummary();
@@ -10,7 +13,17 @@ export function Summary() {
   console.log({ summaryData });
 
   if (isPending) {
-    return <div>Loading...</div>;
+    return (
+      <>
+        <h3 className="text-gray-400">This month so far...</h3>
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+          <FakeCurrencyCard />
+          <FakeNumberCard />
+          <FakeNumberCard />
+          <FakeCurrencyCard />
+        </div>
+      </>
+    );
   }
 
   if (isError) {
