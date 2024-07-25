@@ -1,20 +1,7 @@
 import React from "react";
-import dayjs from "dayjs";
-import { Invoice } from "../types";
-import {
-  calcPercentageChange,
-  invoicesAfterDate,
-  showPercentageChange,
-  totalRevenue,
-} from "../utils";
-import { Card, CardContent, CardHeader, CardTitle } from "./Card";
-import {
-  BadgeDollarSign,
-  CreditCard,
-  DollarSign,
-  Receipt,
-  ReceiptText,
-} from "lucide-react";
+import { showPercentageChange } from "../utils";
+import { Card, CardContent, CardHeader, CardTitle } from "./ui/Card";
+import { CreditCard, DollarSign, Receipt, ReceiptText } from "lucide-react";
 import { useSummary } from "../hooks/useSummary";
 
 export function Summary() {

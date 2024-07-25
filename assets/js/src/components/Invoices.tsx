@@ -8,9 +8,9 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger,
 } from "@radix-ui/react-dropdown-menu";
-import { Button } from "./Button";
+import { Button } from "./ui/Button";
 import { ArrowUpDown, MoreHorizontal } from "lucide-react";
-import { DropdownMenuItem, DropdownMenuSeparator } from "./Dropdown";
+import { DropdownMenuItem, DropdownMenuSeparator } from "./ui/Dropdown";
 import { useInvoices } from "../hooks/useInvoices";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { postTransaction } from "../api";

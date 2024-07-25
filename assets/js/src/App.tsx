@@ -9,7 +9,7 @@ import { Register } from "./components/Register";
 import { Auth } from "./components/Auth";
 import { UserNav } from "./components/UserNav";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-import { Toaster } from "./components/Toaster";
+import { Toaster } from "./components/ui/Toaster";
 
 export const App = () => {
   const queryClient = new QueryClient();

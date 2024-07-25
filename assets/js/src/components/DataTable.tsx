@@ -18,16 +18,16 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "./Table";
-import { Button } from "./Button";
-import { Input } from "./Input";
+} from "./ui/Table";
+import { Button } from "./ui/Button";
+import { Input } from "./ui/Input";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "./Select";
+} from "./ui/Select";
 import {
   Sheet,
   SheetContent,
@@ -36,7 +36,7 @@ import {
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-} from "./Sheet";
+} from "./ui/Sheet";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -48,9 +48,9 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "./Form";
-import { Calendar } from "./Calendar";
-import { Popover, PopoverContent, PopoverTrigger } from "./Popover";
+} from "./ui/Form";
+import { Calendar } from "./ui/Calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "./ui/Popover";
 import { cn } from "../utils";
 import { format } from "date-fns";
 import {
@@ -265,9 +265,9 @@ export function DataTable<TData, TValue>({
                       {header.isPlaceholder
                         ? null
                         : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext(),
-                          )}
+                          header.column.columnDef.header,
+                          header.getContext(),
+                        )}
                     </TableHead>
                   );
                 })}

@@ -7,9 +7,9 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "./Dropdown";
-import { Button } from "./Button";
-import { Avatar, AvatarFallback } from "./Avatar";
+} from "./ui/Dropdown";
+import { Button } from "./ui/Button";
+import { Avatar, AvatarFallback } from "./ui/Avatar";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Redirect, useLocation } from "wouter";
 import { logoutUser } from "../api";

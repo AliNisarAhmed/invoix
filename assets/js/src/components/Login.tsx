@@ -5,7 +5,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Card, CardContent, CardHeader, CardTitle } from "./Card";
+import { Card, CardContent, CardHeader, CardTitle } from "./ui/Card";
 import {
   Form,
   FormControl,
@@ -13,9 +13,9 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "./Form";
-import { Input } from "./Input";
-import { Button } from "./Button";
+} from "./ui/Form";
+import { Input } from "./ui/Input";
+import { Button } from "./ui/Button";
 import { useCurrentUser } from "../context/CurrentUserContext";
 
 export function Login() {
