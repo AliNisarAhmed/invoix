@@ -78,3 +78,76 @@ export function formatCurrency(value: number) {
     useGrouping: true,
   }).format(value / 100);
 }
+
+export const fakeData: Invoice[] = [
+  {
+    status: "not_paid",
+    date: dayjs(),
+    refNo: "INV-04943",
+    amount: "500000",
+    clientName: "Ronaldo",
+  },
+  {
+    status: "paid",
+    date: dayjs(),
+    amount: "500000",
+    clientName: "MVL",
+    refNo: "INV-04939",
+  },
+  {
+    status: "paid",
+    date: dayjs(),
+    amount: "100000",
+    clientName: "Danya",
+    refNo: "INV-04940",
+  },
+  {
+    status: "paid",
+    date: dayjs(),
+    amount: "200000",
+    clientName: "Destiny",
+    refNo: "INV-04942",
+  },
+  {
+    status: "paid",
+    date: dayjs(),
+    amount: "100000",
+    clientName: "Biden",
+    refNo: "INV-04941",
+  },
+  {
+    status: "paid",
+    date: dayjs(),
+    amount: "100000",
+    clientName: "Harris",
+    refNo: "INV-04938",
+  },
+  {
+    status: "not_paid",
+    date: dayjs(),
+    amount: "300000",
+    clientName: "Azlan",
+    refNo: "INV-04935",
+  },
+  {
+    status: "paid",
+    date: dayjs(),
+    amount: "500000",
+    clientName: "Ali",
+    refNo: "INV-04936",
+  },
+  {
+    status: "paid",
+    date: dayjs(),
+    amount: "500000",
+    clientName: "Azlan Ali",
+    refNo: "INV-04937",
+  },
+  {
+    status: "not_paid",
+    date: dayjs(),
+    amount: "200000",
+    clientName: "Azlan Ali",
+    refNo: "INV-04929",
+  },
+];

@@ -19,7 +19,7 @@ import { Button } from "./ui/Button";
 import { useCurrentUser } from "../context/CurrentUserContext";
 
 export function Register() {
-  const { currentUser, setCurrentUser } = useCurrentUser();
+  const { currentUser, setCurrentUserInContext } = useCurrentUser();
   const [location, setLocation] = useLocation();
 
   const formSchema = z
@@ -122,8 +122,8 @@ export function Register() {
   ) {
     e.preventDefault();
     try {
-      const data = await registerUserMutation.mutateAsync({ email, password });
-      setCurrentUser(data);
+      await registerUserMutation.mutateAsync({ email, password });
+      setCurrentUserInContext();
       setLocation("/invoices", { replace: true });
     } catch (e) {
       form.setError(e.errorInfo.field, { message: e.errorInfo.message });

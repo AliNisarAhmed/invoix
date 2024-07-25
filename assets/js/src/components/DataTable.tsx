@@ -70,6 +70,7 @@ interface DataTableProps<TData, TValue> {
   data: TData[];
   pagination: ClientPagination;
   setPagination: React.Dispatch<React.SetStateAction<ClientPagination>>;
+  isLoading: boolean;
 }
 
 export function DataTable<TData, TValue>({
@@ -77,6 +78,7 @@ export function DataTable<TData, TValue>({
   data,
   pagination,
   setPagination,
+  isLoading,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
@@ -119,7 +121,6 @@ export function DataTable<TData, TValue>({
   const postInvoiceMutation = useMutation({
     mutationFn: postInvoice,
     onSuccess: async (data: Invoice) => {
-      console.log({ invoiceData: data });
       toast({
         title: `Success: Invoice created.`,
         description: `${data.refNo} - client: ${data.clientName} - amount: ${Number(data.amount) / 100}`,
@@ -139,6 +140,7 @@ export function DataTable<TData, TValue>({
     <div>
       <div className="flex items-center py-4">
         <Input
+          disabled={isLoading}
           placeholder="Filter Clients..."
           value={
             (table.getColumn("clientName")?.getFilterValue() as string) ?? ""
@@ -149,7 +151,10 @@ export function DataTable<TData, TValue>({
           className="max-w-sm"
         />
         <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
-          <SheetTrigger className="ml-auto bg-green-600 py-2 px-4 rounded text-white">
+          <SheetTrigger
+            disabled={isLoading}
+            className="ml-auto bg-green-600 py-2 px-4 rounded text-white"
+          >
             Create Invoice
           </SheetTrigger>
           <SheetContent>
@@ -316,6 +321,7 @@ export function DataTable<TData, TValue>({
                 pageSize: Number(value),
               }));
             }}
+            disabled={isLoading}
           >
             <SelectTrigger className="h-8 w-[70px]">
               <SelectValue placeholder={table.getState().pagination.pageSize} />
@@ -341,7 +347,7 @@ export function DataTable<TData, TValue>({
                 setPagination(Pagination.getPreviousPage);
               }
             }}
-            disabled={!Pagination.hasPreviousPage(pagination)}
+            disabled={isLoading || !Pagination.hasPreviousPage(pagination)}
           >
             <span className="sr-only">Go to previous page</span>
             <ChevronLeftIcon className="h-4 w-4" />
@@ -354,7 +360,7 @@ export function DataTable<TData, TValue>({
                 setPagination(Pagination.getNextPage);
               }
             }}
-            disabled={!Pagination.hasNextPage(pagination)}
+            disabled={isLoading || !Pagination.hasNextPage(pagination)}
           >
             <span className="sr-only">Go to next page</span>
             <ChevronRightIcon className="h-4 w-4" />

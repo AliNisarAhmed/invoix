@@ -4,12 +4,12 @@ import { getCookieObject } from "../utils";
 
 type CurrentUserContext = {
   currentUser: CurrentUser | undefined | null;
-  setCurrentUser: React.Dispatch<CurrentUser | undefined | null>;
+  setCurrentUserInContext: () => void;
 };
 
 const CurrentUserContext = React.createContext<CurrentUserContext>({
   currentUser: undefined,
-  setCurrentUser: () => undefined,
+  setCurrentUserInContext: () => undefined,
 });
 
 function useCurrentUser() {
@@ -24,15 +24,22 @@ function useCurrentUser() {
 function CurrentUserProvider({ children }) {
   const [currentUser, setCurrentUser] = React.useState<
     CurrentUser | null | undefined
-  >(() => getCurrentUser());
+  >(() => getCurrentUserFromCookie());
+
+  const setCurrentUserInContext = () => {
+    setCurrentUser(getCurrentUserFromCookie());
+  };
+
   return (
-    <CurrentUserContext.Provider value={{ currentUser, setCurrentUser }}>
+    <CurrentUserContext.Provider
+      value={{ currentUser, setCurrentUserInContext }}
+    >
       {children}
     </CurrentUserContext.Provider>
   );
 }
 
-function getCurrentUser() {
+function getCurrentUserFromCookie() {
   const cookieObject = getCookieObject();
   const currentUserCookieEncoded = cookieObject["_invoix_web_current_user"];
   if (currentUserCookieEncoded) {

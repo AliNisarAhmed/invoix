@@ -16,18 +16,15 @@ import { logoutUser } from "../api";
 import { useCurrentUser } from "../context/CurrentUserContext";
 
 export function UserNav() {
-  const { currentUser, setCurrentUser } = useCurrentUser();
   const [location, setLocation] = useLocation();
+  const { currentUser, setCurrentUserInContext } = useCurrentUser();
   const queryClient = useQueryClient();
 
-  const mutation = useMutation({
-    mutationFn: logoutUser,
-    onSuccess: (data) => {
-      queryClient.clear();
-    },
+  const logoutMutation = useMutation({
+    mutationFn: async () => await logoutUser(),
   });
 
-  if (mutation.isSuccess) {
+  if (logoutMutation.isSuccess || !currentUser) {
     return <Redirect to="/login" replace />;
   }
 
@@ -66,7 +63,9 @@ export function UserNav() {
   );
 
   async function handleLogout() {
-    await mutation.mutateAsync();
-    setCurrentUser(null);
+    await logoutMutation.mutateAsync();
+    setCurrentUserInContext();
+    setLocation("/login", { replace: true });
+    queryClient.removeQueries({ queryKey: ["summary", "invoices"] });
   }
 }

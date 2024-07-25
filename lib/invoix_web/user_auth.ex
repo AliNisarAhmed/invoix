@@ -222,9 +222,9 @@ defmodule InvoixWeb.UserAuth do
     else
       conn
       |> put_status(401)
-      |> configure_session(drop: true)
-      |> clear_session()
       |> delete_resp_cookie(@current_user_cookie, @current_user_cookie_options)
+      |> configure_session(drop: true)
+      |> halt()
       |> json(%{"error" => "Not logged in"})
     end
   end

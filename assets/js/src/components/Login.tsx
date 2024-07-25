@@ -19,7 +19,7 @@ import { Button } from "./ui/Button";
 import { useCurrentUser } from "../context/CurrentUserContext";
 
 export function Login() {
-  const { currentUser, setCurrentUser } = useCurrentUser();
+  const { currentUser, setCurrentUserInContext } = useCurrentUser();
   const [location, setLocation] = useLocation();
   const formSchema = z.object({
     email: z.string().min(1, "Email is required").email(),
@@ -29,12 +29,16 @@ export function Login() {
     resolver: zodResolver(formSchema),
   });
 
-  const queryClient = useQueryClient();
-  const mutation = useMutation({
-    mutationFn: loginUser,
+  const loginMutation = useMutation({
+    mutationFn: async (data: { email: string; password: string }) =>
+      await loginUser(data),
   });
 
-  if (mutation.isSuccess || currentUser) {
+  if (loginMutation.isIdle && currentUser) {
+    return <Redirect to="/" replace />;
+  }
+
+  if (loginMutation.isSuccess && currentUser) {
     return <Redirect to="/" replace />;
   }
 
@@ -43,7 +47,7 @@ export function Login() {
       <div className="container w-1/2">
         <Card>
           <CardHeader>
-            <CardTitle>Register</CardTitle>
+            <CardTitle>Login</CardTitle>
           </CardHeader>
           <CardContent>
             <Form {...form}>
@@ -103,9 +107,8 @@ export function Login() {
     e.preventDefault();
     try {
       form.clearErrors();
-      const data = await mutation.mutateAsync({ email, password });
-      setCurrentUser(data);
-      setLocation("/", { replace: true });
+      await loginMutation.mutateAsync({ email, password });
+      setCurrentUserInContext();
     } catch (e) {
       form.setError("root.serverError", { message: e.message });
     }

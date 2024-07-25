@@ -15,7 +15,7 @@ import { useInvoices } from "../hooks/useInvoices";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { postTransaction } from "../api";
 import { useToast } from "../hooks/use-toast";
-import { formatCurrency } from "../utils";
+import { fakeData, formatCurrency } from "../utils";
 
 export function Invoices() {
   const [clientPagination, setClientPagination] = useState<ClientPagination>({
@@ -35,6 +35,8 @@ export function Invoices() {
     clientPagination,
     setClientPagination,
   );
+
+  const isLoading = isPending || isFetching;
 
   const { toast } = useToast();
 
@@ -70,6 +72,7 @@ export function Invoices() {
               onClick={() =>
                 column.toggleSorting(column.getIsSorted() === "asc")
               }
+              disabled={isLoading}
             >
               Client Name
               <ArrowUpDown className="ml-2 h-4 w-4" />
@@ -86,6 +89,7 @@ export function Invoices() {
               onClick={() =>
                 column.toggleSorting(column.getIsSorted() === "asc")
               }
+              disabled={isLoading}
             >
               Date
               <ArrowUpDown className="ml-2 h-4 w-4" />
@@ -107,6 +111,7 @@ export function Invoices() {
               onClick={() =>
                 column.toggleSorting(column.getIsSorted() === "asc")
               }
+              disabled={isLoading}
             >
               Status
               <ArrowUpDown className="ml-2 h-4 w-4" />
@@ -128,6 +133,7 @@ export function Invoices() {
               onClick={() =>
                 column.toggleSorting(column.getIsSorted() === "asc")
               }
+              disabled={isLoading}
             >
               Amount
               <ArrowUpDown className="ml-2 h-4 w-4" />
@@ -147,7 +153,7 @@ export function Invoices() {
           const invoice = row.original;
           return (
             <DropdownMenu>
-              <DropdownMenuTrigger asChild>
+              <DropdownMenuTrigger asChild disabled={isLoading}>
                 <Button variant="ghost" className="h-8 w-8 p-0">
                   <span className="sr-only">Open Menu</span>
                   <MoreHorizontal className="h-4 w-4" />
@@ -185,16 +191,25 @@ export function Invoices() {
         },
       },
     ],
-    [],
+    [isLoading],
   );
 
   if (isError) {
     return <div>Error fetching invoices</div>;
   }
 
-  if (isPending || isFetching) {
-    // TODO: change to skeleton
-    return null;
+  if (isLoading) {
+    return (
+      <div className="blur-sm">
+        <DataTable
+          columns={columns}
+          data={fakeData}
+          pagination={clientPagination}
+          setPagination={setClientPagination}
+          isLoading={isLoading}
+        />
+      </div>
+    );
   }
 
   return (
@@ -204,6 +219,7 @@ export function Invoices() {
         data={data.data}
         pagination={clientPagination}
         setPagination={setClientPagination}
+        isLoading={isPending}
       />
     </div>
   );

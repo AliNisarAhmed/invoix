@@ -24,7 +24,7 @@ function setupNextPage(pagination: ServerPagination): UpdatePaginationFunc {
 }
 
 function hasNextPage(clientPagination: ClientPagination): boolean {
-  return clientPagination.pageMeta[clientPagination.pageIndex].hasNextPage;
+  return clientPagination?.pageMeta[clientPagination?.pageIndex]?.hasNextPage;
 }
 
 function getNextPage(clientPagination: ClientPagination): ClientPagination {
@@ -36,7 +36,8 @@ function getNextPage(clientPagination: ClientPagination): ClientPagination {
 }
 
 function hasPreviousPage(clientPagination: ClientPagination): boolean {
-  return clientPagination.pageMeta[clientPagination.pageIndex].hasPreviousPage;
+  return clientPagination?.pageMeta[clientPagination?.pageIndex]
+    ?.hasPreviousPage;
 }
 
 function getPreviousPage(clientPagination: ClientPagination): ClientPagination {
@@ -69,5 +70,5 @@ export {
   hasNextPage,
   getPreviousPage,
   hasPreviousPage,
-  resetPagination
+  resetPagination,
 };
