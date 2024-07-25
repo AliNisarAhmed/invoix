@@ -1,30 +1,7 @@
-import dayjs, { Dayjs } from "dayjs";
+import dayjs from "dayjs";
 import { Invoice, InvoiceDTO, Transaction, TransactionDTO } from "../types";
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
-
-export function invoicesAfterDate(invoices: Invoice[], date: Dayjs): Invoice[] {
-  return invoices.filter((inv) => inv.date.isAfter(date));
-}
-
-export function transactionsBeforeDate(
-  transactions: Transaction[],
-  date: Dayjs,
-): Transaction[] {
-  return transactions.filter((tr) => tr.date.isAfter(date));
-}
-
-export function totalRevenue(invoices: Invoice[]): number {
-  return invoices
-    .map((inv) => Number(inv.amount))
-    .reduce((acc, x) => acc + x, 0);
-}
-
-export function totalAmount(transactions: Transaction[]): number {
-  return transactions
-    .map((tr) => Number(tr.amount))
-    .reduce((acc, x) => acc + x, 0);
-}
 
 export function mapTransactionDTO(
   transactions: TransactionDTO[],
@@ -92,4 +69,12 @@ export function calcPercentageChange({
   current: number;
 }): number {
   return ((current - previous) / previous) * 100;
+}
+
+export function formatCurrency(value: number) {
+  return new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD",
+    useGrouping: true,
+  }).format(value / 100);
 }

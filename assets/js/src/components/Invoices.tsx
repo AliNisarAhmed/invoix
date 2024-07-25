@@ -15,6 +15,7 @@ import { useInvoices } from "../hooks/useInvoices";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { postTransaction } from "../api";
 import { useToast } from "../hooks/use-toast";
+import { formatCurrency } from "../utils";
 
 export function Invoices() {
   const [clientPagination, setClientPagination] = useState<ClientPagination>({
@@ -134,12 +135,8 @@ export function Invoices() {
           </div>
         ),
         cell: ({ row }) => {
-          const amount = parseFloat(row.getValue("amount")) / 100;
-          const formatted = new Intl.NumberFormat("en-us", {
-            style: "currency",
-            currency: "USD",
-            useGrouping: true,
-          }).format(amount);
+          const amount = parseFloat(row.getValue("amount"));
+          const formatted = formatCurrency(amount);
 
           return <div className="text-right font-medium">{formatted}</div>;
         },

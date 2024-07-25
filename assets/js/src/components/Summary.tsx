@@ -1,5 +1,5 @@
 import React from "react";
-import { showPercentageChange } from "../utils";
+import { formatCurrency, showPercentageChange } from "../utils";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/Card";
 import { CreditCard, DollarSign, Receipt, ReceiptText } from "lucide-react";
 import { useSummary } from "../hooks/useSummary";
@@ -28,7 +28,7 @@ export function Summary() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {summaryData.currentRevenue / 100}
+              {formatCurrency(summaryData.currentRevenue)}
             </div>
             <p className="text-xs text-muted-foreground">
               {showPercentageChange({
@@ -86,7 +86,7 @@ export function Summary() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {summaryData.currentIncome / 100}
+              {formatCurrency(summaryData.currentIncome)}
             </div>
             <p className="text-xs text-muted-foreground">
               {showPercentageChange({
