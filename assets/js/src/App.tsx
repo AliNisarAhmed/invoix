@@ -13,6 +13,14 @@ import { Toaster } from "./components/Toaster";
 
 export const App = () => {
   const queryClient = new QueryClient();
+
+  React.useEffect(() => {
+    const welcome = document.querySelector("#welcome");
+    if (welcome) {
+      welcome.remove();
+    }
+  }, []);
+
   return (
     <QueryClientProvider client={queryClient}>
       <Toaster />

@@ -8,8 +8,33 @@
       <%= assigns[:page_title] || "Invoix" %>
     </.live_title>
     <link phx-track-static rel="stylesheet" href={~p"/assets/app.css"} />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      .welcome {
+        width: 100vw;
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        font-family: sans-serif;
+      }
+
+      .welcomeh1 {
+        font-size: 20px;
+      }
+    </style>
   </head>
   <body class="bg-white antialiased">
+    <div id="welcome" class="welcome">
+      <h1 class="welcomeh1">Welcome to Invoix...</h1>
+    </div>
+
     <script defer phx-track-static type="text/javascript" src={~p"/assets/index.js"}>
     </script>
     <div id="root" />

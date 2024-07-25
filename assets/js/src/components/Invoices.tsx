@@ -50,6 +50,7 @@ export function Invoices() {
         exact: true,
         type: "active",
       });
+      queryClient.invalidateQueries({ queryKey: ["summary"] });
     },
   });
 

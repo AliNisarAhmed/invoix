@@ -8,7 +8,7 @@ function useInvoices(
   setPagination: React.Dispatch<React.SetStateAction<ClientPagination>>,
 ) {
   const query = useQuery({
-    staleTime: 15,
+    staleTime: Infinity,
     queryKey: ["invoices", pagination.pageIndex, pagination.pageSize],
     queryFn: async () => {
       const paginatedInvoices = await getInvoices({
