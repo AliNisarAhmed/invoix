@@ -103,7 +103,15 @@ export function formatCurrency(value: number) {
   }).format(value / 100);
 }
 
-export const fakeData: Invoice[] = [
+export function getFakeData(length?: number) {
+  if (length === null || length === undefined) {
+    return fakeData;
+  }
+
+  return fakeData.slice(0, length - 1);
+}
+
+const fakeData: Invoice[] = [
   {
     status: "not_paid",
     date: dayjs(),

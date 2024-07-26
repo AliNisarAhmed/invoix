@@ -15,7 +15,7 @@ import { useInvoices } from "../hooks/useInvoices";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { postTransaction } from "../api";
 import { useToast } from "../hooks/use-toast";
-import { fakeData, formatCurrency } from "../utils";
+import { getFakeData, formatCurrency } from "../utils";
 
 export function Invoices() {
   const [clientPagination, setClientPagination] = useState<ClientPagination>({
@@ -197,6 +197,8 @@ export function Invoices() {
   if (isError) {
     return <div>Error fetching invoices</div>;
   }
+
+  const fakeData = getFakeData(data?.data?.length);
 
   if (isLoading) {
     return (
