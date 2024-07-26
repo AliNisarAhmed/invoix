@@ -33,8 +33,8 @@ export function Summary() {
               {showPercentageChange({
                 current: summaryData.currentRevenue,
                 previous: summaryData.previousRevenue,
-              })}{" "}
-              from last month
+                period: "month",
+              })}
             </p>
           </CardContent>
         </Card>
@@ -53,8 +53,8 @@ export function Summary() {
               {showPercentageChange({
                 previous: summaryData.previousInvoices,
                 current: summaryData.currentInvoices,
-              })}{" "}
-              from last month
+                period: "month",
+              })}
             </p>
           </CardContent>
         </Card>
@@ -73,8 +73,8 @@ export function Summary() {
               {showPercentageChange({
                 current: summaryData.currentTransactions,
                 previous: summaryData.previousTransactions,
-              })}{" "}
-              from last month
+                period: "month",
+              })}
             </p>
           </CardContent>
         </Card>
@@ -91,8 +91,8 @@ export function Summary() {
               {showPercentageChange({
                 previous: summaryData.previousIncome,
                 current: summaryData.currentIncome,
-              })}{" "}
-              from last month
+                period: "month",
+              })}
             </p>
           </CardContent>
         </Card>

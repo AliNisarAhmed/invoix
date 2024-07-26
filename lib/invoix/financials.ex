@@ -68,7 +68,7 @@ defmodule Invoix.Financials do
   def sum_amount(items) do
     items
     |> Enum.map(& &1.amount)
-    |> Enum.reduce(&Decimal.add/2)
+    |> Enum.reduce(Decimal.new(1, 0, 2), &Decimal.add/2)
     |> Decimal.to_integer()
   end
 

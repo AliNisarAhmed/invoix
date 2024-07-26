@@ -1,5 +1,11 @@
 import dayjs from "dayjs";
-import { Invoice, InvoiceDTO, Transaction, TransactionDTO } from "../types";
+import {
+  Invoice,
+  InvoiceDTO,
+  SummaryPeriod,
+  Transaction,
+  TransactionDTO,
+} from "../types";
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 
@@ -49,15 +55,25 @@ export function clearCookies() {
 export function showPercentageChange({
   previous,
   current,
+  period,
 }: {
   previous: number;
   current: number;
+  period: SummaryPeriod;
 }): string {
   const change = calcPercentageChange({ previous, current });
+  if (change === 0) {
+    return `No change from last ${period}`;
+  }
+
+  if (!Number.isFinite(change)) {
+    return `No data for last ${period}`;
+  }
+
   if (change >= 0) {
-    return `+${change.toFixed(2)}%`;
+    return `+${change.toFixed(2)}% from last ${period}`;
   } else {
-    return `${change.toFixed(2)}%`;
+    return `${change.toFixed(2)}% from last ${period}`;
   }
 }
 
@@ -68,6 +84,14 @@ export function calcPercentageChange({
   previous: number;
   current: number;
 }): number {
+  if (previous === 0 && current === 0) {
+    return 0;
+  }
+
+  if (previous === 0) {
+    return Infinity;
+  }
+
   return ((current - previous) / previous) * 100;
 }
 
