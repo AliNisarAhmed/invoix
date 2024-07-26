@@ -10,6 +10,9 @@ function useSummary() {
     refetchOnReconnect: false,
     refetchOnMount: false,
     refetchOnWindowFocus: false,
+    retry: (count, error) => {
+      return error.response?.status !== 401 && count < 3;
+    },
   });
 
   return summary;

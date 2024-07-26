@@ -25,6 +25,9 @@ function useInvoices(
     refetchOnMount: false,
     refetchOnWindowFocus: false,
     placeholderData: keepPreviousData,
+    retry: (count, error) => {
+      return error.response?.status !== 401 && count < 3;
+    },
   });
 
   return query;

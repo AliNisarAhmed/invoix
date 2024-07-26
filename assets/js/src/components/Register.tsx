@@ -1,7 +1,7 @@
 import React from "react";
 import { Redirect, useLocation } from "wouter";
 import { registerUser } from "../api";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -36,7 +36,6 @@ export function Register() {
     resolver: zodResolver(formSchema),
   });
 
-  const queryClient = useQueryClient();
   const registerUserMutation = useMutation({
     mutationFn: registerUser,
   });

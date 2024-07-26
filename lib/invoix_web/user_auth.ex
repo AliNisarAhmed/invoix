@@ -13,7 +13,7 @@ defmodule InvoixWeb.UserAuth do
   @remember_me_cookie "_invoix_web_user_remember_me"
   @remember_me_options [sign: true, max_age: @max_age, same_site: "Lax"]
   @current_user_cookie "_invoix_web_current_user"
-  @current_user_cookie_options [max_age: @max_age, http_only: false, same_site: "Lax"]
+  @current_user_cookie_options [max_age: @max_age, http_only: false, same_site: "Strict"]
 
   @doc """
   Logs the user in.

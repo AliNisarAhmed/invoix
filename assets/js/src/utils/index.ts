@@ -1,22 +1,7 @@
 import dayjs from "dayjs";
-import {
-  Invoice,
-  InvoiceDTO,
-  SummaryPeriod,
-  Transaction,
-  TransactionDTO,
-} from "../types";
+import { Invoice, InvoiceDTO, SummaryPeriod } from "../types";
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
-
-export function mapTransactionDTO(
-  transactions: TransactionDTO[],
-): Transaction[] {
-  return transactions.map((tr) => ({
-    ...tr,
-    date: dayjs(tr.date, "YYYY-MM-DD"),
-  }));
-}
 
 export function mapInvoiceDTO(invoices: InvoiceDTO[]): Invoice[] {
   return invoices.map(mapInvoice);
@@ -101,6 +86,14 @@ export function formatCurrency(value: number) {
     currency: "USD",
     useGrouping: true,
   }).format(value / 100);
+}
+
+export async function timeout(ms: number) {
+  const promise = new Promise((resolve) => {
+    setTimeout(resolve, ms);
+  });
+
+  await promise;
 }
 
 export function getFakeData(length?: number) {

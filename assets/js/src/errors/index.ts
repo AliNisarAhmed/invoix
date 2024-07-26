@@ -8,5 +8,5 @@ export class ApiFormError extends Error {
 
 export type FormErrorInfo = {
   message: string;
-  field: string;
+  field?: string;
 };
