@@ -14,6 +14,7 @@ import Ecto.Query, warn: false
 alias Invoix.Repo
 alias Invoix.Accounts.User
 alias Invoix.Financials.Invoice
+alias Invoix.Financials.Transaction
 
 guest = Repo.one(from u in User, where: u.email == "guest@invoix.com")
 
@@ -29,17 +30,48 @@ end
 
 guest = Repo.one(from u in User, where: u.email == "guest@invoix.com")
 
-for i <- 1..10 do
-  Invoix.Repo.insert!(
-    %Invoice{}
-    |> Invoice.changeset(%{
-      status: if(rem(i, 2) == 0, do: "paid", else: "not_paid"),
-      date: DateTime.utc_now() |> DateTime.add(-86400 * i, :second) |> DateTime.truncate(:second),
-      amount: Decimal.new(1, i * 100, 2),
-      client_name: if(rem(i, 2) == 0, do: "Ali Ahmed", else: "Azlan Ali"),
-      user_id: guest.id
-    })
-  )
+for i <- 1..1000 do
+  invoice_date =
+    DateTime.utc_now() |> DateTime.add(-86400 * i, :second) |> DateTime.truncate(:second)
+
+  invoice_amount = Decimal.new(1, i * 100, 2)
+
+  client_name =
+    if(rem(i, 2) == 0,
+      do: "Ali Ahmed",
+      else: if(rem(i, 3) == 0, do: "Samrah Akber", else: "Azlan Ali")
+    )
+
+  invoice =
+    Invoix.Repo.insert!(
+      %Invoice{}
+      |> Invoice.changeset(%{
+        status: if(rem(i, 2) == 0, do: "paid", else: "not_paid"),
+        date: invoice_date,
+        amount: invoice_amount,
+        client_name: client_name,
+        user_id: guest.id
+      })
+    )
+
+  random_number = :rand.uniform(10)
+
+  if random_number <= 2 do
+    Invoix.Repo.insert!(
+      %Transaction{}
+      |> Transaction.changeset(%{
+        ref_no: invoice.ref_no,
+        date: DateTime.add(invoice_date, 5, :day),
+        amount: invoice_amount,
+        description: "Transcation for Invoice #{invoice.ref_no}",
+        user_id: guest.id
+      })
+    )
+
+    invoice
+    |> Invoice.update_status_changeset("paid")
+    |> Repo.update!()
+  end
 end
 
 # Invoix.Repo.insert!(%Invoix.Financials.Invoice{
